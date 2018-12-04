@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import SwipeableViews from "react-swipeable-views";
 import {
   Card,
@@ -14,20 +15,28 @@ import classnames from "classnames";
 
 // my stuff
 import SongBasics from "../forms/SongBasics.jsx";
+import SongSwitcher from "./SongSwitcher.jsx";
+import { getAllSongs } from "../actions/songActions";
+import { getAllPeople } from "../actions/peopleActions";
 
 export class SongDetails extends Component {
   state = {
-    index: 2
+    index: 0
   };
+  componentDidMount() {
+    const { getAllPeople, getAllSongs } = this.props;
+    getAllPeople();
+    getAllSongs();
+  }
   setCardIndex = index => () => {
     this.setState({ index });
   };
   render() {
     const tabs = [
       { name: "Basics", component: SongBasics },
-      { name: "Vibes", component: SongBasics },
-      { name: "Sounds", component: SongBasics },
-      { name: "Topics", component: SongBasics }
+      { name: "Vibes", component: () => <div>yo</div> },
+      { name: "Sounds", component: () => <div>yo</div> },
+      { name: "Topics", component: () => <div>yo</div> }
     ];
     return (
       <Row>
@@ -49,6 +58,7 @@ export class SongDetails extends Component {
                     </NavLink>
                   );
                 })}
+                <SongSwitcher />
               </Nav>
             </CardHeader>
             <CardBody>
@@ -65,5 +75,12 @@ export class SongDetails extends Component {
     );
   }
 }
-
-export default SongDetails;
+const mapState = state => ({
+  allSongs: state.songs.allSongs,
+  allPeople: state.people.allPeople
+});
+const mapDispatch = { getAllPeople, getAllSongs };
+export default connect(
+  mapState,
+  mapDispatch
+)(SongDetails);
