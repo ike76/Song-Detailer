@@ -6,10 +6,12 @@ import promiseMiddleware from "redux-promise-middleware";
 // import reducers
 import songsReducer from "./reducers/songsReducer";
 import peopleReducer from "./reducers/peopleReducer";
+import adminReducer from "./reducers/adminReducer";
 
 export const rootReducer = combineReducers({
   songs: songsReducer,
-  people: peopleReducer
+  people: peopleReducer,
+  admin: adminReducer
 });
 
 const store = createStore(

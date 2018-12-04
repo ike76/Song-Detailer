@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { CloudinaryContext } from "cloudinary-react";
 import { Provider } from "react-redux";
 // my stuff
@@ -8,13 +9,14 @@ import store from "./store";
 class App extends Component {
   render() {
     return (
-      <div className="container">
+      <Router>
         <Provider store={store}>
-          <CloudinaryContext cloudName="homecomp">
-            <SongDetails />
-          </CloudinaryContext>
+          <Switch>
+            <Route path="/songEdit" component={SongDetails} />
+            <Route path="/" component={SongDetails} />
+          </Switch>
         </Provider>
-      </div>
+      </Router>
     );
   }
 }
