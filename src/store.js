@@ -29,7 +29,7 @@ const rrfConfig = {
   useFirestoreForProfile: true
 };
 const firebaseConfig = {
-  apiKey: "AIzaSyCunjaNbCq3dRDnta1zARd_SZjO0ZXZ274",
+  apiKey: process.env.REACT_APP_API_KEY,
   authDomain: "song-detailer.firebaseapp.com",
   databaseURL: "https://song-detailer.firebaseio.com",
   projectId: "song-detailer",

@@ -3,7 +3,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import BSTable from "react-bootstrap-table-next";
-import { Input, Button } from "reactstrap";
+import { Button } from "reactstrap";
 //
 import { mapStateWhenReady } from "../helpers";
 import LoadingSpinner from "./loadingSpinner";
@@ -46,7 +46,6 @@ export class StakeholdersTable extends Component {
         [attr]: person[attr] ? false : true
       }
     );
-    console.log("toggling", attr, personId, person);
   };
   content() {
     const { settings, stakeholders } = this.props;
