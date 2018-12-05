@@ -4,6 +4,7 @@ import { CloudinaryContext } from "cloudinary-react";
 import { Provider } from "react-redux";
 // my stuff
 import SongDetails from "./components/SongDetails.jsx";
+import AdminPage from "./pages/AdminPage.jsx";
 import store from "./store";
 
 class App extends Component {
@@ -13,6 +14,7 @@ class App extends Component {
         <Provider store={store}>
           <Switch>
             <Route path="/songEdit" component={SongDetails} />
+            <Route path="/admin" component={AdminPage} />
             <Route path="/" component={SongDetails} />
           </Switch>
         </Provider>

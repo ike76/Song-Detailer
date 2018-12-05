@@ -3,6 +3,7 @@ import {
   SET_CURRENT_SONG,
   GET_ALL_SONGS
 } from "../actions/songActions";
+import { SET_CURRENT } from "../actions/currentActions";
 import Moment from "moment";
 
 const initialState = {
@@ -56,6 +57,7 @@ const songsReducer = (state = initialState, action) => {
     case SET_CURRENT_SONG: {
       return { ...state, currentSongId: action.songId };
     }
+
     case "SONGS_FULFILLED": {
       const allSongs = action.payload;
       const allSongsObj = allSongs.reduce((obj, song) => {

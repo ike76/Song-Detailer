@@ -1,21 +1,26 @@
 import React from "react";
+import { compose } from "redux";
 import { connect } from "react-redux";
+import { firestoreConnect } from "react-redux-firebase";
 import { Input, FormGroup, Label } from "reactstrap";
 // mine
-import { setCurrentSong } from "../actions/songActions";
-const SongSwitcher = ({ songs, currentSongId, setCurrentSong }) => {
+import { setCurrent } from "../actions/currentActions";
+import LoadingSpinner from "./loadingSpinner.jsx";
+const SongSwitcher = ({ songsFS, currentSongId, setCurrent }) => {
   console.log("current id", currentSongId);
-  return (
+  return !songsFS ? (
+    LoadingSpinner
+  ) : (
     <FormGroup>
       <Label>Song:</Label>
       <Input
         type="select"
-        onChange={e => setCurrentSong(e.target.value)}
+        onChange={e => setCurrent("song", e.target.value)}
         value={currentSongId ? currentSongId : ""}
       >
-        {Object.keys(songs).map(songId => (
+        {Object.keys(songsFS).map(songId => (
           <option key={songId} value={songId}>
-            {songs[songId].title}
+            {songsFS[songId].title}
           </option>
         ))}
       </Input>
@@ -24,12 +29,16 @@ const SongSwitcher = ({ songs, currentSongId, setCurrentSong }) => {
 };
 const mapState = state => ({
   songs: state.songs.allSongs,
-  currentSongId: state.songs.currentSongId
+  currentSongId: state.current.song,
+  songsFS: state.firestore.data.songs
 });
 const mapDispatch = {
-  setCurrentSong
+  setCurrent
 };
-export default connect(
-  mapState,
-  mapDispatch
+export default compose(
+  firestoreConnect(["songs"]),
+  connect(
+    mapState,
+    mapDispatch
+  )
 )(SongSwitcher);

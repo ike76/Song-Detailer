@@ -6,6 +6,15 @@ export const addSong = songInfo => ({
   songInfo
 });
 
+export const addSongFS = songInfo => async (
+  dispatch,
+  getState,
+  getFirestore
+) => {
+  const firestore = getFirestore();
+  const response = await firestore.collection("songs").add(songInfo);
+};
+
 export const SET_CURRENT_SONG = "SET_CURRENT_SONG";
 export const setCurrentSong = songId => ({
   type: SET_CURRENT_SONG,

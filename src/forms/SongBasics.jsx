@@ -1,10 +1,18 @@
 import React, { Component } from "react";
+import { compose } from "redux";
 import { connect } from "react-redux";
+import { firestoreConnect } from "react-redux-firebase";
 import { Form } from "react-final-form";
 import { Button, Row, Col } from "reactstrap";
+
 // my stuff
 import SongPlayer from "../components/SongPlayer.jsx";
-import { getAllSongs, createSong, updateSong } from "../actions/songActions";
+import {
+  getAllSongs,
+  createSong,
+  updateSong,
+  addSongFS
+} from "../actions/songActions";
 import { getAllPeople } from "../actions/peopleActions";
 import {
   TextInput,
@@ -12,7 +20,6 @@ import {
   CheckboxGroup,
   DateInput
 } from "./formComponents";
-import { arch } from "os";
 import LoadingSpinner from "../components/loadingSpinner.jsx";
 
 const artistSelectOptions = [
@@ -33,8 +40,9 @@ const publisherOptions = [
 export class SongBasics extends Component {
   handleSubmit = values => {
     console.log("values from form", values);
-    const { updateSong, createSong } = this.props;
-    values._id ? updateSong(values) : createSong(values);
+    const FSvalues = { ...values, releaseDate: values.releaseDate.valueOf() };
+    const { updateSong, createSong, addSongFS } = this.props;
+    values._id ? updateSong(values) : addSongFS(FSvalues);
   };
   validate = values => {
     const errors = {};
@@ -46,42 +54,29 @@ export class SongBasics extends Component {
     // TODO this would come from context or redux
   }
 
-  getComposers() {
-    if (!this.props.people) return "ooooo";
-    console.log("thispropspeople", this.props.people);
-    const composers = this.props.people.reduce((arr, person) => {
-      const composer = {
-        display: `${person.firstName} ${person.lastName}`,
-        value: person._id
-      };
-      arr.push(composer);
-      return arr;
-    }, []);
-    return composers;
-  }
   render() {
-    const { peopleFetching, allPeople, currentSong } = this.props;
+    const { peopleFS, songsFS, currentSongId } = this.props;
     const composers =
-      allPeople &&
-      allPeople.reduce((arr, person) => {
+      peopleFS &&
+      Object.keys(peopleFS).reduce((arr, personId) => {
         arr.push({
-          display: `${person.firstName} ${person.lastName}`,
-          value: person._id
+          display: `${peopleFS[personId].firstName} ${
+            peopleFS[personId].lastName
+          }`,
+          value: personId
         });
         return arr;
       }, []);
-    console.log("composers, fetching", composers, peopleFetching);
+    const currentSong = songsFS && songsFS[currentSongId];
     return (
       <>
         <h1>Basics</h1>
         <SongPlayer />
-        <h5>
-          current song: {this.props.currentSong && this.props.currentSong.title}
-        </h5>
+        <h5>current song: {currentSong && currentSong.title}</h5>
         <Form
           onSubmit={this.handleSubmit}
           validate={this.validate}
-          initialValues={this.props.currentSong}
+          initialValues={currentSong}
           render={({ handleSubmit, values, submitting, pristine }) => (
             <form onSubmit={handleSubmit}>
               <p>{JSON.stringify(values)}</p>
@@ -100,7 +95,7 @@ export class SongBasics extends Component {
               </Row>
               <Row>
                 <Col xs={12} sm={6}>
-                  {!composers || peopleFetching ? (
+                  {!composers ? (
                     <LoadingSpinner />
                   ) : (
                     <>
@@ -151,15 +146,23 @@ const mapDispatch = {
   getAllSongs,
   getAllPeople,
   createSong,
-  updateSong
+  updateSong,
+  addSongFS
 };
 const mapState = state => ({
-  songs: state.songs.allSongs,
-  currentSong: state.songs.allSongs[state.songs.currentSongId],
-  allPeople: state.people.allPeople,
-  peopleFetching: state.people.isFetching
+  songsFS: state.firestore.data.songs,
+  peopleFS: state.firestore.data.people,
+  currentSongId: state.current.song
 });
-export default connect(
-  mapState,
-  mapDispatch
+// export default connect(
+//   mapState,
+//   mapDispatch
+// )(SongBasics);
+
+export default compose(
+  firestoreConnect(["songs", "people"]),
+  connect(
+    mapState,
+    mapDispatch
+  )
 )(SongBasics);
