@@ -9537,10 +9537,10 @@ img {
   .navbar .navbar-collapse .input-group {
     margin: 0;
     margin-top: 5px; }
-  .navbar .navbar-nav .nav-item:first-child {
+  /* .navbar .navbar-nav .nav-item:first-child {
     margin-top: 10px; }
   .navbar .navbar-nav .nav-item:not(:last-child) {
-    margin-bottom: 10px; }
+    margin-bottom: 10px; } */
   .navbar .dropdown.show .dropdown-menu {
     display: block !important;
     transform: translate3d(0px, 0px, 0px) !important; }

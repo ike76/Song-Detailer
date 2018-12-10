@@ -1,8 +1,10 @@
 import React from "react";
 import { FormGroup, Label } from "reactstrap";
 import { CheckInput } from "../formComponents";
+import LoadingSpinner from "../../components/loadingSpinner";
 
 const CheckboxGroup = ({ options, label, ...props }) => {
+  if (!options) return <LoadingSpinner />;
   return (
     <FormGroup tag="fieldset">
       <Label>

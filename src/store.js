@@ -57,7 +57,7 @@ const store = createStoreWithFirebase(
   composeWithDevTools(
     applyMiddleware(
       thunk.withExtraArgument(getFirestore),
-      logger,
+      // logger,
       promiseMiddleware()
     )
   )

@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import { compose } from "redux";
-import { firestoreConnect } from "react-redux-firebase";
+import { firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { connect } from "react-redux";
 import { Row, Col } from "reactstrap";
 //
 import StakeholdersForm from "../forms/formComponents/StakeHoldersForm.jsx";
-import StakeholdersTable from "./StakeholdersTable.jsx";
-import { mapStateWhenReady } from "../helpers";
+import PeopleAdmin from "./PeopleAdmin.jsx";
 import LoadingSpinner from "./loadingSpinner.jsx";
 
 export class Stakeholders extends Component {
@@ -14,40 +13,13 @@ export class Stakeholders extends Component {
     const { stakeholders } = this.props;
     return (
       <div>
-        <h3>All Stakeholders</h3>
-        {!stakeholders ? (
-          <LoadingSpinner />
-        ) : (
-          <StakeholdersTable />
-          //   Object.keys(stakeholders).map(key => {
-          //     const sh = stakeholders[key];
-          //     return (
-          //       <div>
-          //         {sh.firstName} {sh.lastName}
-          //       </div>
-          //     );
-          //   })
-        )}
-        <hr />
-        <hr />
-        <StakeholdersForm />
+        <PeopleAdmin />
       </div>
     );
   }
 }
 
-export default compose(
-  firestoreConnect((props, store) => [
-    {
-      collection: "accounts",
-      doc: store.getState().current.adminId,
-      subcollections: [{ collection: "stakeholders" }]
-    },
-    {
-      collection: "accounts",
-      doc: store.getState().current.adminId,
-      subcollections: [{ collection: "settings" }]
-    }
-  ]),
-  connect(state => mapStateWhenReady(state, ["stakeholders", "settings"]))
-)(Stakeholders);
+const mapState = state => ({
+  stakeholders: state.firestore.data.people
+});
+export default compose(connect(mapState))(Stakeholders);

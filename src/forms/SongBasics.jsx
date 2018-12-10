@@ -160,7 +160,13 @@ const mapState = state => ({
 // )(SongBasics);
 
 export default compose(
-  firestoreConnect(["songs", "people"]),
+  firestoreConnect([
+    "songs",
+    {
+      collection: "people",
+      where: ["adminId", "==", "u1kCkvashmdyiYlr5AOSTTY0eNL2"]
+    }
+  ]),
   connect(
     mapState,
     mapDispatch

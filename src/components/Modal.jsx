@@ -1,11 +1,13 @@
 import React from "react";
 import { Modal, ModalHeader, ModalFooter, ModalBody } from "reactstrap";
-const Modal = ({ content, isOpen }) => {
+const ModalHandler = ({ header, footer, isOpen, toggle, children }) => {
   return (
-    <Modal isOpen={isOpen}>
-      <ModalBody>hey wuzzup</ModalBody>
+    <Modal toggle={toggle} isOpen={isOpen}>
+      <ModalHeader>{header}</ModalHeader>
+      <ModalBody>{children}</ModalBody>
+      <ModalFooter>{footer}</ModalFooter>
     </Modal>
   );
 };
 
-export default Modal;
+export default ModalHandler;

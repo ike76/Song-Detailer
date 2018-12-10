@@ -85,22 +85,10 @@ export class StakeholdersTable extends Component {
     return <BSTable keyField="id" data={data} columns={columns} />;
   }
   render() {
-    return <div>{this.state.loaded ? this.content() : <LoadingSpinner />}</div>;
+    return this.content();
   }
 }
-
-export default compose(
-  firestoreConnect((props, store) => [
-    {
-      collection: "accounts",
-      doc: store.getState().current.adminId,
-      subcollections: [{ collection: "stakeholders" }]
-    },
-    {
-      collection: "accounts",
-      doc: store.getState().current.adminId,
-      subcollections: [{ collection: "settings" }]
-    }
-  ]),
-  connect(state => mapStateWhenReady(state, ["stakeholders", "settings"]))
-)(StakeholdersTable);
+const mapState = state => ({
+  stakeholders: state.firestore.data.people
+});
+export default compose(connect(mapState))(StakeholdersTable);
