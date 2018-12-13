@@ -7,7 +7,6 @@ import { firestoreConnect } from "react-redux-firebase";
 import Dropzone from "react-dropzone";
 import LoadingSpinner from "./loadingSpinner";
 const CLOUDINARY_API_KEY = process.env.REACT_APP_CLOUDINARY_API_KEY;
-const CLOUDINARY_URL = process.env.REACT_APP_CLOUDINARY_URL;
 
 export class ImageDisplayer extends Component {
   state = {
@@ -21,7 +20,7 @@ export class ImageDisplayer extends Component {
     return this.props.firestore.update(
       {
         collection: "people",
-        doc: this.props.personId
+        doc: this.props.currentPersonId
       },
       {
         profileImage: public_id
@@ -47,7 +46,6 @@ export class ImageDisplayer extends Component {
         )
         .then(({ data }) => {
           console.log("cloud response", data);
-          //   this.props.change("profileImage", data.public_id);
           this.updateFirestore(data.public_id);
           this.setState({ uploading: false, public_id: data.public_id });
         })
@@ -63,20 +61,29 @@ export class ImageDisplayer extends Component {
           onDrop={images => this.handleUploadImages(images)}
           multiple
           accept="image/*"
+          className=""
         >
           {this.state.uploading ? (
             <LoadingSpinner />
           ) : !public_id ? (
-            <img src="https://via.placeholder.com/200x200?text=Drop+Image+Here" />
+            <img
+              src="https://via.placeholder.com/200x200?text=Drop+Image+Here"
+              alt="drop profile img here"
+            />
           ) : (
             <Image
               cloudName="homecomp"
               publicId={public_id}
               className="d-block"
+              alt={
+                person &&
+                `profile image of ${person.firstName} ${person.lastName}`
+              }
             >
               <Transformation
                 gravity="face:center"
-                height="200"
+                aspectRatio="1:1"
+                // height="200"
                 width="200"
                 crop="fill"
               />
@@ -88,7 +95,8 @@ export class ImageDisplayer extends Component {
   }
 }
 const mapState = (state, props) => ({
-  person: props.person
+  person: props.person,
+  currentPersonId: state.current.personId
 });
 export default compose(
   connect(mapState),

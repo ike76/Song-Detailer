@@ -1,7 +1,7 @@
 import React from "react";
 import { Field } from "react-final-form";
 import { FormGroup, Input, Label } from "reactstrap";
-
+import PropTypes from "prop-types";
 const SelectInput = ({ name, label, options }) => {
   return (
     <Field name={name}>
@@ -21,6 +21,16 @@ const SelectInput = ({ name, label, options }) => {
       }}
     </Field>
   );
+};
+SelectInput.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      display: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired
+    })
+  )
 };
 
 export default SelectInput;

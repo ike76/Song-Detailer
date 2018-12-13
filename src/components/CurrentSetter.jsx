@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { firestoreConnect } from "react-redux-firebase";
+import { firestoreConnect, isLoaded } from "react-redux-firebase";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
@@ -13,19 +13,26 @@ class CurrentSetter extends Component {
     currentId: null
   };
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.people) {
-      const currentPerson = this.props.people[this.props.match.params.id] || {};
-      const currentPersonId = this.props.match.params.id;
-      this.props.setCurrent("person", currentPerson);
-      this.props.setCurrent("personId", currentPersonId);
-    }
+    this.sendCurrentId();
   }
   componentDidMount() {
     const currentSection = this.props.match.params.section;
     const currentId = this.props.match.params.id;
     // const currentPerson = this.props.people[currentId];
     this.setState({ currentSection, currentId });
+    this.sendCurrentId();
     // this.props.setCurrent(currentSection, currentPerson);
+  }
+  sendCurrentId() {
+    const { people, songs, groups } = this.props;
+    if (isLoaded(people) && isLoaded(songs) && isLoaded(groups)) {
+      const resourceType = this.props.match.params.section;
+      const currentResource =
+        this.props[resourceType][this.props.match.params.id] || {};
+      const currentResourceId = this.props.match.params.id || "none";
+      this.props.setCurrent(resourceType, currentResource);
+      this.props.setCurrent("id", currentResourceId);
+    }
   }
   render() {
     return (
@@ -33,7 +40,7 @@ class CurrentSetter extends Component {
         <ul>
           <li>section: {this.state.currentSection}</li>
           <li>id: {this.state.currentId}</li>
-          <li>people: {showMe(this.props.people, "people")}</li>
+          {/* <li>people: {showMe(this.props.people, "people")}</li> */}
         </ul>
       </div>
     );
@@ -42,7 +49,8 @@ class CurrentSetter extends Component {
 
 const mapState = (state, props) => ({
   people: state.firestore.data.people,
-  songs: state.firestore.data.songs
+  songs: state.firestore.data.songs,
+  groups: state.firestore.data.groups
 });
 const mapDispatch = {
   setCurrent

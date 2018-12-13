@@ -8,6 +8,7 @@ import SongDetails from "./components/SongDetails.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import NavBar from "./components/NavBar.jsx";
 import ModalManager from "./components/ModalManager";
+import AutoSuggester from "./forms/formComponents/autoSuggester.jsx";
 class App extends Component {
   render() {
     return (
@@ -20,6 +21,14 @@ class App extends Component {
               <Route path="/songEdit" component={SongDetails} />
               <Route path="/admin/:section/:id" component={AdminPage} />
               <Route path="/admin/:section" component={AdminPage} />
+              <Route
+                path="/test/auto"
+                component={() => (
+                  <div className="container">
+                    <AutoSuggester />
+                  </div>
+                )}
+              />
               <Route path="/" component={SongDetails} />
             </Switch>
           </>

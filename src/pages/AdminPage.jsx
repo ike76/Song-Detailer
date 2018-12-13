@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 import { firestoreConnect } from "react-redux-firebase";
 import { Row, Col, Button, Nav, NavItem, NavLink } from "reactstrap";
 //
-import Stakeholders from "../components/Stakeholders.jsx";
 import PeopleAdmin from "../components/PeopleAdmin.jsx";
+import SongsAdmin from "../components/SongsAdmin.jsx";
+import GroupsAdmin from "../components/GroupsAdmin";
 import LoadingSpinner from "../components/loadingSpinner.jsx";
 import CurrentSetter from "../components/CurrentSetter.jsx";
 
@@ -16,18 +17,31 @@ export class AdminPage extends Component {
     songs: {}
   };
   componentDidUpdate(prevProps) {
-    console.log("requesting", this.props.requesting);
-    console.log("requested", this.props.requested);
+    // console.log("requesting", this.props.requesting);
+    // console.log("requested", this.props.requested);
   }
 
   subPages = {
-    people: <PeopleAdmin personId={this.props.match.params.id} />
+    people: (
+      <PeopleAdmin
+        key={this.props.match.params.id}
+        personId={this.props.match.params.id}
+      />
+    ),
+    songs: (
+      <SongsAdmin
+        key={this.props.match.params.id}
+        songId={this.props.match.params.id}
+      />
+    ),
+    groups: (
+      <GroupsAdmin
+        key={this.props.match.params.id}
+        groupId={this.props.match.params.id}
+      />
+    )
   };
   render() {
-    const {
-      match: { url }
-    } = this.props;
-    console.log("url", url);
     return (
       <div className="container">
         <CurrentSetter
@@ -37,14 +51,19 @@ export class AdminPage extends Component {
         <h1>Admin Page</h1>
         <Nav pills>
           <NavItem>
-            <NavLink>
-              <Link to="/admin/songs"> Songs</Link>
-            </NavLink>
+            <Link className="nav-link" to="/admin/songs">
+              Songs
+            </Link>
           </NavItem>
           <NavItem>
-            <NavLink>
-              <Link to="/admin/people">People</Link>
-            </NavLink>
+            <Link className="nav-link" to="/admin/people">
+              People
+            </Link>
+          </NavItem>
+          <NavItem>
+            <Link className="nav-link" to="/admin/groups">
+              Groups
+            </Link>
           </NavItem>
         </Nav>
         <hr />
@@ -59,15 +78,28 @@ const mapState = state => ({
   requested: state.firestore.status.requested
 });
 const mapDispatch = {};
+const adminFilter = ["adminId", "==", "u1kCkvashmdyiYlr5AOSTTY0eNL2"];
 export default compose(
   firestoreConnect([
     {
       collection: "people",
-      where: ["adminId", "==", "u1kCkvashmdyiYlr5AOSTTY0eNL2"]
+      where: adminFilter
     },
     {
       collection: "accounts",
       doc: "u1kCkvashmdyiYlr5AOSTTY0eNL2"
+    },
+    {
+      collection: "songs",
+      where: adminFilter
+    },
+    {
+      collection: "groups",
+      where: adminFilter
+    },
+    {
+      collection: "albums",
+      where: adminFilter
     }
   ]),
   connect(

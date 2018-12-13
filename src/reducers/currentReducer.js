@@ -5,8 +5,8 @@ import {
 } from "../actions/currentActions";
 
 const initialState = {
-  song: null,
-  person: {},
+  songs: {}, // holds the current song
+  people: {}, // holds the current person
   adminId: "hAEoRLPjh97E5FBbxKpM",
   modal: null
 };

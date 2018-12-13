@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import SwipeableViews from "react-swipeable-views";
 import {
   Card,
   CardBody,
@@ -62,11 +61,9 @@ export class SongDetails extends Component {
               </Nav>
             </CardHeader>
             <CardBody>
-              <SwipeableViews index={this.state.index}>
-                {tabs.map(tab => (
-                  <tab.component key={tab.name} />
-                ))}
-              </SwipeableViews>
+              {tabs.map(tab => (
+                <tab.component key={tab.name} />
+              ))}
             </CardBody>
           </Card>
         </Col>

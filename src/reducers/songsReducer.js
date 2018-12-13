@@ -48,7 +48,6 @@ const initialStatex = {
   }
 };
 const songsReducer = (state = initialState, action) => {
-  console.log(`${action.type} in reducer`);
   switch (action.type) {
     case ADD_SONG: {
       // do stuff

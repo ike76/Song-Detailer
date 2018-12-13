@@ -41,18 +41,13 @@ class NavBarMine extends Component {
               <span className="navbar-toggler-bar navbar-kebab" />
               <span className="navbar-toggler-bar navbar-kebab" />
             </NavbarToggler>
-            {/* <NavbarToggler
-              className="mr-3 d-flex justify-content-center border-0"
-              onClick={this.toggle}
-            >
-              <i className="fas fa-bars" />
-            </NavbarToggler> */}
+
             <Collapse id="navbarContent" isOpen={this.state.isOpen} navbar>
               <Nav className="ml-auto" navbar>
                 <NavItem>
-                  <NavLink>
-                    <Link to="/admin">ADMIN</Link>
-                  </NavLink>
+                  <Link className="nav-link" to="/admin">
+                    ADMIN
+                  </Link>
                 </NavItem>
                 <NavItem>
                   <NavLink

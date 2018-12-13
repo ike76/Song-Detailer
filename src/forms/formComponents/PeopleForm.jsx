@@ -7,7 +7,6 @@ import firebase from "firebase";
 import { Form, Field } from "react-final-form";
 import { withRouter } from "react-router-dom";
 import { Button, Row, Col } from "reactstrap";
-import { Image, Transformation } from "cloudinary-react";
 //
 import LoadingSpinner from "../../components/loadingSpinner.jsx";
 import TextInput from "./textInput.jsx";
@@ -43,9 +42,9 @@ export class StakeHoldersForm extends Component {
       });
   };
   deletePerson = () => {
-    const { person, personId } = this.props;
+    const { firestore, person, personId } = this.props;
     if (!person.adminId) return null;
-    this.props.firestore.update(
+    firestore.update(
       {
         collection: "people",
         doc: personId
@@ -68,15 +67,7 @@ export class StakeHoldersForm extends Component {
     return (
       <div>
         <Form onSubmit={this.onSubmit} initialValues={person}>
-          {({
-            handleSubmit,
-            pristine,
-            invalid,
-            reset,
-            initialize,
-            values,
-            change
-          }) => {
+          {({ handleSubmit, pristine }) => {
             return (
               <form onSubmit={handleSubmit}>
                 {/* <Row>
@@ -112,7 +103,7 @@ export class StakeHoldersForm extends Component {
                       </Col>
                       <Col xs={12} sm={6}>
                         <CheckboxGroup
-                          label="Roles"
+                          label="Default Roles"
                           options={attrNameOptions}
                           name="Roles"
                         />
@@ -163,8 +154,8 @@ const mapState = (state, props) => ({
   account:
     state.firestore.data.accounts &&
     state.firestore.data.accounts[state.firebase.auth.uid],
-  person: state.current.person,
-  personId: state.current.personId
+  person: state.current.people,
+  personId: state.current.id
 });
 export default compose(
   firestoreConnect(),

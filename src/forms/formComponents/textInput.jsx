@@ -2,7 +2,7 @@ import React from "react";
 import { Field } from "react-final-form";
 import { FormGroup, Input, Label, FormText } from "reactstrap";
 import classnames from "classnames";
-
+import PropTypes from "prop-types";
 const TextInput = ({ name, label, placeholder }) => {
   return (
     <Field name={name}>
@@ -26,6 +26,11 @@ const TextInput = ({ name, label, placeholder }) => {
       }}
     </Field>
   );
+};
+TextInput.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired
 };
 
 export default TextInput;
