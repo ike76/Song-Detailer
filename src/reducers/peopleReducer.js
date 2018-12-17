@@ -1,9 +1,3 @@
-import {
-  PEOPLE_SUCCESS,
-  PEOPLE_FETCHING,
-  PEOPLE_ERROR
-} from "../actions/peopleActions";
-
 const initialState = {
   allPeople: null,
   currentPerson: "",

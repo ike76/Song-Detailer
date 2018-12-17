@@ -10,8 +10,6 @@ import SelectorList from "./SelectorList.jsx";
 //
 //
 export class PeopleAdmin extends Component {
-  componentDidMount() {}
-
   table = () => {
     const { peopleAttributeNames } = this.props.account;
     const { people, currentPersonId } = this.props;
@@ -22,19 +20,25 @@ export class PeopleAdmin extends Component {
 
         <Card>
           <CardHeader>
-            <h3>People</h3>
-          </CardHeader>
-          <CardBody>
             <Row>
-              <Col xs={12} md={3}>
+              <Col xs={6}>
+                <h3>People</h3>
+              </Col>
+              <Col xs={6}>
                 <SelectorList
                   listOptions={people}
                   currentOptionId={currentPersonId}
                   resourceType={"people"}
                   resourceSingular={"person"}
-                  formatter={person => person.firstName + " " + person.lastName}
+                  formatter={person =>
+                    person && person.firstName + " " + person.lastName
+                  }
                 />
               </Col>
+            </Row>
+          </CardHeader>
+          <CardBody>
+            <Row>
               <Col xs={12} md={9}>
                 <PeopleForm />
               </Col>
@@ -45,8 +49,8 @@ export class PeopleAdmin extends Component {
     );
   };
   render() {
-    const { account, people } = this.props;
-    return account && people ? (
+    const { account, people, currentResourceType } = this.props;
+    return account && people && currentResourceType === "people" ? (
       this.table()
     ) : (
       <>
@@ -63,6 +67,7 @@ const mapState = state => ({
     firebase.auth().currentUser &&
     state.firestore.data.accounts[firebase.auth().currentUser.uid],
   currentPerson: state.current.person,
-  currentPersonId: state.current.personId
+  currentPersonId: state.current.personId,
+  currentResourceType: state.current.resourceType
 });
 export default connect(mapState)(PeopleAdmin);

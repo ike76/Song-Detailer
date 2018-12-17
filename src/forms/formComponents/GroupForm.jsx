@@ -3,30 +3,27 @@ import { firestoreConnect, isLoaded } from "react-redux-firebase";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { Button, Row, Col, ListGroup, ListGroupItem, Badge } from "reactstrap";
-import styled from "styled-components";
+import {
+  Button,
+  Row,
+  Col,
+  ListGroup,
+  ListGroupItem,
+  UncontrolledTooltip
+} from "reactstrap";
+import classnames from "classnames";
 //
-import TextInput from "./textInput.jsx";
-import SelectInput from "./selectInput.jsx";
-import { CheckboxGroup } from "./index.js";
 import { showMe } from "../../helpers";
 import LoadingSpinner from "../../components/loadingSpinner.jsx";
-import AutoSuggester from "./autoSuggester.jsx";
-import { categories } from "./SongFormNav.jsx";
-import Basics from "./songFormPages/Basics.jsx";
 //
 
-const PeopleGrid = styled.div`
-  background: salmon;
-`;
 export class GroupForm extends Component {
   onSubmit = values => {
     const { groupId } = this.props;
     console.log("values from song form", values);
     if (!groupId) throw new Error("no song id");
-    return;
-    if (groupId === "new") this.createGroup(values);
-    else this.updateGroup(values);
+    // if (groupId === "new") this.createGroup(values);
+    // else this.updateGroup(values);
   };
   createGroup = values => {
     const { firestore, firebase, history } = this.props;
@@ -62,19 +59,56 @@ export class GroupForm extends Component {
       }
     );
   };
-  toggleRoleForPerson = (person, role) => {};
+  togglePersonHavingRole = (personId, role) => {
+    const { firestore, groupId, group } = this.props;
+    console.log(`toggling ${personId} for ${role}`);
+    const revisedPerson = { ...group.members[personId] };
+    const personHasRole = revisedPerson[role] && revisedPerson[role].hasRole;
+    console.log(`person has role ? ${personHasRole}`);
+    revisedPerson[role] = { ...revisedPerson[role], hasRole: !personHasRole };
+    firestore.update(
+      {
+        collection: "groups",
+        doc: groupId
+      },
+      {
+        members: { ...group.members, [personId]: revisedPerson }
+      }
+    );
+  };
   togglePersonInGroup = personId => {
-    const { group, firestore, groupId } = this.props;
+    const { group, firestore, groupId, people } = this.props;
     const personIsInGroup =
-      group.members && group.members.find(p => p.id === personId);
+      group.members[personId] && group.members[personId].inGroup;
     let newGroupMembers;
     if (personIsInGroup) {
       // remove person
-      newGroupMembers = group.members.filter(person => person.id !== personId);
+      newGroupMembers = { ...group.members };
+      newGroupMembers[personId] = {
+        ...newGroupMembers[personId],
+        inGroup: false
+      };
     } else {
-      // add person to group
-      newGroupMembers = group.members ? [...group.members] : [];
-      newGroupMembers.push({ id: personId });
+      newGroupMembers = group.members ? { ...group.members } : {};
+      if (newGroupMembers[personId]) {
+        // add person to group with previous roles
+        newGroupMembers[personId] = {
+          ...newGroupMembers[personId], // <-- previous roles
+          inGroup: true
+        };
+      } else {
+        // if new to group, give person default roles
+        const defaultRoles = people[personId].Roles
+          ? people[personId].Roles.reduce((obj, role) => {
+              obj[role.toLowerCase()] = { hasRole: true };
+              return obj;
+            }, {})
+          : {};
+        newGroupMembers[personId] = {
+          inGroup: true,
+          ...defaultRoles
+        };
+      }
     }
     // update firestore
     firestore.update(
@@ -84,44 +118,80 @@ export class GroupForm extends Component {
       }
     );
   };
+
   formDisplay = () => {
-    const { group, groupId, people, account } = this.props;
+    const { group, people, account } = this.props;
     const { peopleAttributeNames } = account;
     const roles = Object.keys(peopleAttributeNames);
-    console.table("roles", roles);
     return (
       <>
         <Row>
-          <ListGroup>
+          <ListGroup className="w-100">
             {/* people who are IN the group */}
-            {people.map(person => {
-              const personInGroup =
-                group.members && group.members.find(p => p.id === person.id);
-              console.log("person in group", person.firstName, personInGroup);
+            {Object.keys(group.members).map(personId => {
+              const person = people[personId];
+              if (!group.members[personId].inGroup) return null;
               return (
-                <ListGroupItem action>
+                <ListGroupItem action className="p-0">
                   <Row>
-                    <Col xs={12} md={4}>
-                      <span className="mr-5">{`${person.firstName} ${
+                    <Col
+                      xs={12}
+                      md={4}
+                      className="justify-content-center d-flex align-items-center"
+                    >
+                      <span className="">{`${person.firstName} ${
                         person.lastName
                       }`}</span>
                     </Col>
-                    <Col xs={12} md={8}>
-                      {roles.map(role => (
-                        <Button
-                          onClick={this.toggleRoleForPerson(null, role)}
-                          key={role}
-                          size="sm"
+                    <Col
+                      xs={12}
+                      md={8}
+                      className="col-12 col-md-8 d-flex justify-content-center flex-wrap pt-1"
+                    >
+                      {/* ROLES buttons for each person */}
+                      {roles.map(_role => {
+                        const role = _role.toLowerCase();
+                        return (
+                          <Button
+                            onClick={() =>
+                              this.togglePersonHavingRole(personId, role)
+                            }
+                            key={role}
+                            size="sm"
+                            className={classnames("mt-0 mb-1", {
+                              "btn-outline-info":
+                                !group.members[personId][role] ||
+                                !group.members[personId][role].hasRole
+                            })}
+                          >
+                            {role}
+                          </Button>
+                        );
+                      })}
+                      <span className=" text-danger d-flex align-items-center ml-2">
+                        <i
+                          className="fas fa-minus-circle"
+                          id={`deleteTooltip${personId}`}
+                        />
+                        <UncontrolledTooltip
+                          placement="top"
+                          target={`deleteTooltip${personId}`}
+                          autohide={false}
                         >
-                          {role}
-                        </Button>
-                      ))}
-                      <Button
-                        onClick={() => this.togglePersonInGroup(person.id)}
-                        className={personInGroup ? "btn-info" : ""}
-                      >
-                        in group
-                      </Button>
+                          <div>
+                            remove{" "}
+                            <strong>{person.firstName.toUpperCase()}</strong>{" "}
+                            from group?
+                          </div>
+                          <Button
+                            size="sm"
+                            color="danger"
+                            onClick={() => this.togglePersonInGroup(personId)}
+                          >
+                            remove
+                          </Button>
+                        </UncontrolledTooltip>
+                      </span>
                     </Col>
                   </Row>
                 </ListGroupItem>
@@ -136,24 +206,24 @@ export class GroupForm extends Component {
           </Col>
           <Col>
             <div>
-              <span className="border m-2 p-1 rounded">
-                Dude Thurston
-                <Button className="ml-1" size="sm">
-                  add
-                </Button>
-              </span>
-              <span className="border m-2 p-1 rounded">
-                Dude Thurston
-                <Button className="ml-1" size="sm">
-                  add
-                </Button>
-              </span>
-              <span className="border m-2 p-1 rounded">
-                Dude Thurston
-                <Button className="ml-1" size="sm">
-                  add
-                </Button>
-              </span>
+              {Object.keys(people)
+                .filter(
+                  key => !group.members[key] || !group.members[key].inGroup
+                )
+                .map(key => {
+                  const person = people[key];
+                  return (
+                    <Button
+                      key={key}
+                      size="sm"
+                      className="btn-outline-info"
+                      onClick={() => this.togglePersonInGroup(key)}
+                    >
+                      {person.firstName} {person.lastName}
+                      <i className="ml-2 fas fa-plus-circle ml-2" />
+                    </Button>
+                  );
+                })}
             </div>
           </Col>
         </Row>
@@ -171,15 +241,20 @@ export class GroupForm extends Component {
     );
   };
   render() {
+    const { account, group, groupId, people } = this.props;
     if (
-      //   isLoaded(account) &&
-      //   isLoaded(group) &&
-      //   isLoaded(groupId) &&
-      //   isLoaded(people) &&
+      isLoaded(account) &&
+      isLoaded(groupId) &&
+      isLoaded(people) &&
+      isLoaded(group) &&
       true
-    )
-      return this.formDisplay();
-    else return <LoadingSpinner />;
+    ) {
+      return groupId !== "none" ? (
+        this.formDisplay()
+      ) : (
+        <div>no group selected</div>
+      );
+    } else return <LoadingSpinner />;
   }
 }
 const mapState = state => ({
@@ -188,7 +263,7 @@ const mapState = state => ({
     state.firestore.data.accounts[state.firebase.auth.uid],
   group: state.current.groups,
   groupId: state.current.id,
-  people: state.firestore.ordered.people
+  people: state.firestore.data.people
 });
 export default compose(
   connect(mapState),

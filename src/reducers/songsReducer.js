@@ -1,52 +1,5 @@
-import {
-  ADD_SONG,
-  SET_CURRENT_SONG,
-  GET_ALL_SONGS
-} from "../actions/songActions";
-import { SET_CURRENT } from "../actions/currentActions";
-import Moment from "moment";
-
-const initialState = {
-  allSongs: {},
-  currentSongId: "",
-  isFetching: false,
-  isSaving: false,
-  error: null
-};
-const initialStatex = {
-  currentSongId: "649713",
-  allSongs: {
-    "112345": {
-      title: "Hey Shut yo mouf",
-      artistBand: "babs654312",
-      publishers: ["trdLLC75615", "JLPMtunes123456"],
-      composers: ["macca654321"],
-      releaseDate: new Moment("2018-06-13T05:00:00.000Z")
-    },
-    "987654": {
-      artistBand: "white234235",
-      publishers: ["JLPMtunes123456"],
-      composers: ["turfur12345", "lennon12345"],
-      releaseDate: new Moment("2018-08-17T05:00:00.000Z"),
-      title: "You Hurt My Teeth"
-    },
-    "649713": {
-      title: "tangerine Rainblow",
-      artistBand: "turds987654",
-      publishers: ["trdLLC75615"],
-      composers: ["turfur12345"],
-      releaseDate: new Moment("2018-07-04T05:00:00.000Z")
-    },
-
-    "741852": {
-      title: "All Damn Day",
-      artistBand: "babs654312",
-      publishers: ["JLPMtunes123456"],
-      composers: ["lennon12345"],
-      releaseDate: new Moment("2018-04-14T05:00:00.000Z")
-    }
-  }
-};
+import { ADD_SONG, SET_CURRENT_SONG } from "../actions/songActions";
+const initialState = {};
 const songsReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_SONG: {

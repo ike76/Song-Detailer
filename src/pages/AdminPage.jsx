@@ -3,12 +3,11 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { firestoreConnect } from "react-redux-firebase";
-import { Row, Col, Button, Nav, NavItem, NavLink } from "reactstrap";
+import { Nav, NavItem } from "reactstrap";
 //
 import PeopleAdmin from "../components/PeopleAdmin.jsx";
 import SongsAdmin from "../components/SongsAdmin.jsx";
 import GroupsAdmin from "../components/GroupsAdmin";
-import LoadingSpinner from "../components/loadingSpinner.jsx";
 import CurrentSetter from "../components/CurrentSetter.jsx";
 
 export class AdminPage extends Component {

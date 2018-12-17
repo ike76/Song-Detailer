@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { ModalHeader, ModalFooter, ModalBody, Button } from "reactstrap";
 import firebase from "firebase";
 import { StyledFirebaseAuth } from "react-firebaseui";
-
+import { Button } from "reactstrap";
 //
 
 export class SignInUp extends Component {
@@ -55,7 +54,9 @@ export class SignInUp extends Component {
           Welcome {firebase.auth().currentUser.displayName}! You are now
           signed-in!
         </p>
-        <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
+        <Button className="btn-link" onClick={() => firebase.auth().signOut()}>
+          Sign-out
+        </Button>
       </div>
     );
   }

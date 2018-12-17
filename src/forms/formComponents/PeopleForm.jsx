@@ -4,15 +4,13 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import firebase from "firebase";
-import { Form, Field } from "react-final-form";
+import { Form } from "react-final-form";
 import { withRouter } from "react-router-dom";
 import { Button, Row, Col } from "reactstrap";
 //
-import LoadingSpinner from "../../components/loadingSpinner.jsx";
 import TextInput from "./textInput.jsx";
 import { CheckboxGroup } from "./index.js";
 import ImageDisplayer from "../../components/ImageDisplayer.jsx";
-import { showMe } from "../../helpers";
 
 export class StakeHoldersForm extends Component {
   onSubmit = values => {

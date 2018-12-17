@@ -1,6 +1,5 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
-import logger from "redux-logger";
 import { composeWithDevTools } from "redux-devtools-extension";
 import promiseMiddleware from "redux-promise-middleware";
 
@@ -9,11 +8,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import "firebase/firestore";
-import {
-  reactReduxFirebase,
-  firebaseReducer,
-  getFirebase
-} from "react-redux-firebase";
+import { reactReduxFirebase, firebaseReducer } from "react-redux-firebase";
 import {
   reduxFirestore,
   firestoreReducer,
@@ -25,7 +20,7 @@ import peopleReducer from "./reducers/peopleReducer";
 import adminReducer from "./reducers/adminReducer";
 import currentReducer from "./reducers/currentReducer";
 const rrfConfig = {
-  userProfile: "users",
+  userProfile: null,
   useFirestoreForProfile: true
 };
 const firebaseConfig = {
@@ -55,11 +50,7 @@ export const rootReducer = combineReducers({
 const store = createStoreWithFirebase(
   rootReducer,
   composeWithDevTools(
-    applyMiddleware(
-      thunk.withExtraArgument(getFirestore),
-      // logger,
-      promiseMiddleware()
-    )
+    applyMiddleware(thunk.withExtraArgument(getFirestore), promiseMiddleware())
   )
 );
 

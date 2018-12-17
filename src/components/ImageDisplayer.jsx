@@ -30,7 +30,7 @@ export class ImageDisplayer extends Component {
   handleUploadImages = (images, onChange) => {
     this.setState({ uploading: true });
     const formData = new FormData();
-    const uploads = images.map(image => {
+    images.map(image => {
       formData.append("file", image);
       formData.append("tags", ["profile image"]); // Add tags for the images - {Array}
       formData.append("upload_preset", "song-detailer"); // Replace the preset name with your own

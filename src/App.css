@@ -30,3 +30,8 @@
     transform: rotate(360deg);
   }
 }
+
+.vertical-text {
+  transform: rotate(90deg);
+  transform-origin: left top 0;
+}

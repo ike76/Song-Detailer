@@ -1,11 +1,7 @@
 import React, { Component } from "react";
 import Autosuggest from "react-autosuggest";
-import styled from "styled-components";
-import debounce from "lodash/debounce";
 import { connect } from "react-redux";
 import {
-  ListGroup,
-  ListGroupItem,
   FormGroup,
   Label,
   Input,
@@ -13,9 +9,7 @@ import {
   InputGroupAddon,
   Button,
   Card,
-  CardHeader,
-  CardBody,
-  Badge
+  CardBody
 } from "reactstrap";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
@@ -132,7 +126,7 @@ export class AutoSuggester extends Component {
   );
   render() {
     const { value, suggestions } = this.state;
-    const { label, placeholder, options } = this.props;
+    const { label, placeholder } = this.props;
     const inputProps = {
       placeholder: placeholder || "Type here",
       value,

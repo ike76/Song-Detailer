@@ -8,3 +8,7 @@ export const showMe = (obj, name) => (
     </small>
   </div>
 );
+
+// export const alphabetize = arrayOfPersonIds => {
+//   return arrayOfPersonIds.sort((a, b) => a.lastName - b.lastName);
+// };

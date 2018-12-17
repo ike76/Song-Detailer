@@ -3,38 +3,28 @@ import { firestoreConnect, isLoaded } from "react-redux-firebase";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import {
-  Button,
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter
-} from "reactstrap";
-import { Form, Field } from "react-final-form";
+import { Button, Row, Col, CardBody, CardFooter, Container } from "reactstrap";
+import { Form } from "react-final-form";
 import Swiper from "react-swipeable-views";
 //
-import TextInput from "./textInput.jsx";
-import SelectInput from "./selectInput.jsx";
-import { CheckboxGroup } from "./index.js";
 import { showMe } from "../../helpers";
 import LoadingSpinner from "../../components/loadingSpinner.jsx";
 import AutoSuggester from "./autoSuggester.jsx";
 import { categories } from "./SongFormNav.jsx";
 import Basics from "./songFormPages/Basics.jsx";
+import Personnel2 from "./songFormPages/Personnel2.jsx";
 //
 
 export class SongForm extends Component {
   onSubmit = values => {
-    const { firestore, songId } = this.props;
+    const { songId } = this.props;
     console.log("values from song form", values);
     if (!songId) throw new Error("no song id");
     if (songId === "new") this.createSong(values);
     else this.updateSong(values);
   };
   createSong = values => {
-    const { firestore, songId, firebase, history } = this.props;
+    const { firestore, firebase, history } = this.props;
     firestore
       .add(
         { collection: "songs" },
@@ -69,26 +59,19 @@ export class SongForm extends Component {
   };
 
   formDisplay = () => {
-    const {
-      song,
-      songId,
-      account,
-      peopleAttributes,
-      people,
-      groups
-    } = this.props;
+    const { song, songId, peopleAttributes, people, groups } = this.props;
     return (
       <>
         {/* {showMe(peopleAttributes, "peopleAttributes")}
       {showMe(people, "people")} */}
         <Form onSubmit={this.onSubmit} initialValues={song}>
           {({ handleSubmit, pristine, values }) => {
-            const vibesPage = <div>dummy Vibes Page</div>;
-            const filesPage = <div>dummy Files Page</div>;
+            // const vibesPage = <div>dummy Vibes Page</div>;
+            // const filesPage = <div>dummy Files Page</div>;
             const soundsPage = <div>dummy Sounds Page</div>;
             const topicsPage = <div>dummy Topics Page</div>;
             const pageMap = {
-              Files: filesPage,
+              // Files: filesPage,
               Basics: (
                 <Basics
                   // key={songId}
@@ -98,18 +81,40 @@ export class SongForm extends Component {
                   people={people}
                 />
               ),
-              Vibes: vibesPage,
+              Personnel: <Personnel2 />,
+              Vibes: (
+                <Col xs={12} md={4}>
+                  <AutoSuggester
+                    attribute="styleDescription"
+                    label="Style Tags"
+                    placeholder="add styles"
+                    key={songId}
+                    options={[
+                      { name: "Happy", value: "Happy" },
+                      { name: "Sad", value: "Sad" },
+                      { name: "Stupid", value: "Stupid" },
+                      { name: "Foggy", value: "Foggy" },
+                      { name: "Stinky", value: "Stinky" },
+                      { name: "Sleepy", value: "Sleepy" }
+                    ]}
+                  />
+                </Col>
+              ),
               Sounds: soundsPage,
               Topics: topicsPage
             };
             return (
               <form onSubmit={handleSubmit}>
                 <CardBody>
-                  <Swiper index={this.props.currentPage}>
-                    {categories.map(page => {
-                      return pageMap[page];
-                    })}
-                  </Swiper>
+                  <Row>
+                    <Swiper index={this.props.page}>
+                      {categories.map(page => {
+                        return (
+                          <Container key={page}>{pageMap[page]}</Container>
+                        );
+                      })}
+                    </Swiper>
+                  </Row>
                 </CardBody>
                 <CardFooter>
                   <Button
@@ -135,15 +140,7 @@ export class SongForm extends Component {
     );
   };
   render() {
-    const { song, songId, account, people, groups } = this.props;
-
-    const attributeNames = account && Object.keys(account.peopleAttributeNames);
-    const attrNameOptions =
-      attributeNames &&
-      attributeNames.map(attr => ({
-        value: attr,
-        display: attr
-      }));
+    const { song, songId, people } = this.props;
 
     if (isLoaded(song) && isLoaded(people) && isLoaded(songId))
       return this.formDisplay();
@@ -158,9 +155,7 @@ const mapState = state => ({
   songId: state.current.id,
   people: state.firestore.ordered.people,
   groups: state.firestore.ordered.groups,
-  albums: state.firestore.ordered.albums,
-  peopleAttributes: state.firestore.ordered.accounts[0].peopleAttributeNames,
-  currentPage: state.current.songPage || 0
+  albums: state.firestore.ordered.albums
 });
 export default compose(
   connect(mapState),

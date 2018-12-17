@@ -12,7 +12,7 @@ const TextInput = ({ name, label, placeholder }) => {
         // console.log("my meta", meta);
         return (
           <FormGroup>
-            <Label>{label}</Label>
+            {label && <Label>{label}</Label>}
             <Input
               {...input}
               placeholder={placeholder || label}
@@ -29,7 +29,7 @@ const TextInput = ({ name, label, placeholder }) => {
 };
 TextInput.propTypes = {
   name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   placeholder: PropTypes.string.isRequired
 };
 

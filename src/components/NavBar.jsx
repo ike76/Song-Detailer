@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import firebase from "firebase";
 import { Link } from "react-router-dom";
 import {
   Collapse,
@@ -10,14 +9,10 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
+  NavLink
 } from "reactstrap";
 import { openModal } from "../actions/currentActions";
 //
-import Modal from "./Modal.jsx";
 class NavBarMine extends Component {
   state = {
     isOpen: false,
@@ -30,7 +25,7 @@ class NavBarMine extends Component {
   };
 
   render() {
-    const { signedIn, displayName } = this.props;
+    const { signedIn } = this.props;
     return (
       <div>
         <Navbar color="primary" expand="sm">

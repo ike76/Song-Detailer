@@ -1,7 +1,9 @@
-import React from "react";
+import React, { Component, Fragment } from "react";
 import {
-  ListGroup,
-  ListGroupItem,
+  ButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
   Input,
   FormGroup,
   Label,
@@ -9,75 +11,101 @@ import {
   Col
 } from "reactstrap";
 import PropTypes from "prop-types";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
-const SelectorList = props => {
-  const {
-    listOptions,
-    currentOptionId,
-    resourceType,
-    formatter,
-    resourceSingular
-  } = props;
-  // const expandedList = (
-  //   <ListGroup className="d-none d-md-block" flush>
-  //     {Object.keys(listOptions).map((key, i) => {
-  //       const resource = listOptions[key];
-  //       return !resource ? null : (
-  //         <Link key={key} to={`/admin/${resourceType}/${key}`}>
-  //           <ListGroupItem
-  //             key={key}
-  //             action
-  //             active={currentOptionId === key}
-  //             className="py-1 py-md-2"
-  //           >
-  //             {formatter(resource)}
-  //           </ListGroupItem>
-  //         </Link>
-  //       );
-  //     })}
-  //     <Link to={`/admin/${resourceType}/new`}>
-  //       <ListGroupItem action active={currentOptionId === "new"}>
-  //         * Add New *
-  //       </ListGroupItem>
-  //     </Link>
-  //   </ListGroup>
-  // );
-  const dropdownList = (
-    <Row className=" ">
-      <Col>
-        <FormGroup>
-          <Label for="resourceSelect">{`select ${resourceSingular}`}</Label>
-          <Input
-            id="resourceSelect"
-            type="select"
-            defaultValue={currentOptionId}
-            onChange={e =>
-              props.history.push(`/admin/${resourceType}/${e.target.value}`)
-            }
+class SelectorList extends Component {
+  state = {
+    dropdownOpen: false
+  };
+  toggleDropdown = () => {
+    this.setState({ dropdownOpen: !this.state.dropdownOpen });
+  };
+  render() {
+    const {
+      listOptions,
+      currentOptionId,
+      resourceType,
+      formatter,
+      resourceSingular,
+      buttonDropdown,
+      history
+    } = this.props;
+
+    const dropdownList = (
+      <Row className=" ">
+        <Col>
+          <FormGroup>
+            <Label for="resourceSelect">{`select ${resourceSingular}`}</Label>
+            <Input
+              id="resourceSelect"
+              type="select"
+              defaultValue={currentOptionId}
+              onChange={e =>
+                history.push(`/admin/${resourceType}/${e.target.value}`)
+              }
+            >
+              <option>{`Select a ${resourceSingular}`}</option>
+              {Object.keys(listOptions).map((resourceId, i) => {
+                const resource = listOptions[resourceId];
+                return (
+                  <option key={resourceId} value={resourceId}>
+                    {formatter(resource)}
+                  </option>
+                );
+              })}
+              <option value={"new"}> Add New </option>;
+            </Input>
+          </FormGroup>
+        </Col>
+      </Row>
+    );
+    const buttonList = (
+      <div>
+        <Label className="mb-0 d-block">{`select ${resourceSingular}`}</Label>
+        <ButtonDropdown
+          className="mt-0"
+          isOpen={this.state.dropdownOpen}
+          toggle={this.toggleDropdown}
+        >
+          <DropdownToggle
+            caret
+            // color="info"
+            className="p-2 text-center btn-block mt-0"
           >
-            <option>{`Select a ${resourceSingular}`}</option>
-            {Object.keys(listOptions).map((key, i) => {
-              const resource = listOptions[key];
+            {currentOptionId !== "none"
+              ? formatter(listOptions[currentOptionId])
+              : `select ${resourceSingular}`}
+          </DropdownToggle>
+          <DropdownMenu>
+            {Object.keys(listOptions).map(resourceId => {
               return (
-                <option key={key} value={key}>
-                  {formatter(resource)}
-                </option>
+                <Fragment key={resourceId}>
+                  <DropdownItem
+                    key={resourceId}
+                    onClick={() =>
+                      history.push(`/admin/${resourceType}/${resourceId}`)
+                    }
+                  >
+                    {formatter(listOptions[resourceId])}
+                  </DropdownItem>
+                  <DropdownItem divider />
+                </Fragment>
               );
             })}
-            <option value={"new"}> Add New </option>;
-          </Input>
-        </FormGroup>
-      </Col>
-    </Row>
-  );
-  return (
-    <>
-      {dropdownList}
-      {/* {expandedList} */}
-    </>
-  );
-};
+          </DropdownMenu>
+        </ButtonDropdown>
+      </div>
+    );
+    return (
+      <>
+        {/* {showMe(listOptions, `listOptions ${typeof listOptions}`)} */}
+        {!buttonDropdown && dropdownList}
+        {buttonDropdown && buttonList}
+        {/* {expandedList} */}
+      </>
+    );
+  }
+}
 
 SelectorList.propTypes = {
   listOptions: PropTypes.object.isRequired,

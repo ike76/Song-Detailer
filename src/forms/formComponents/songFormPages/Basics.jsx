@@ -3,19 +3,8 @@ import { Row, Col } from "reactstrap";
 //
 import TextInput from "../textInput.jsx";
 import SelectInput from "../selectInput.jsx";
-import { CheckboxGroup } from "../index.js";
-import AutoSuggester from "../autoSuggester.jsx";
 
-const SongFormBasics = ({ peopleAttributes, groups, songId, people }) => {
-  const peopleOptions = role => {
-    const peopleAttrs = people
-      .filter(p => p.Roles && p.Roles.includes(role))
-      .map(p => ({
-        value: p.id,
-        display: p.firstName
-      }));
-    return peopleAttrs;
-  };
+const SongFormBasics = ({ groups }) => {
   return (
     <>
       <Row>
@@ -35,7 +24,7 @@ const SongFormBasics = ({ peopleAttributes, groups, songId, people }) => {
       </Row>
       <Row>
         <Col xs={12} md={8}>
-          {Object.keys(peopleAttributes).map(role => {
+          {/* {Object.keys(peopleAttributes).map(role => {
             return (
               <CheckboxGroup
                 key={role}
@@ -44,23 +33,7 @@ const SongFormBasics = ({ peopleAttributes, groups, songId, people }) => {
                 name={role}
               />
             );
-          })}
-        </Col>
-        <Col xs={12} md={4}>
-          <AutoSuggester
-            attribute="styleDescription"
-            label="Style Tags"
-            placeholder="add styles"
-            key={songId}
-            options={[
-              { name: "Happy", value: "Happy" },
-              { name: "Sad", value: "Sad" },
-              { name: "Stupid", value: "Stupid" },
-              { name: "Foggy", value: "Foggy" },
-              { name: "Stinky", value: "Stinky" },
-              { name: "Sleepy", value: "Sleepy" }
-            ]}
-          />
+          })} */}
         </Col>
       </Row>
     </>

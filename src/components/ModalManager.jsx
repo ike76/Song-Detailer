@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Modal, ModalHeader, ModalFooter, ModalBody } from "reactstrap";
+import { Modal } from "reactstrap";
 //
 import { closeModal } from "../actions/currentActions";
 import SignInUp from "./Modals/SignInUp.jsx";
