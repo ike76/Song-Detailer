@@ -21,33 +21,44 @@ import classnames from "classnames";
 import LoadingSpinner from "../../../components/loadingSpinner.jsx";
 import PersonnelGroupPicker from "./PersonnelGroupPicker.jsx";
 import TextInput from "../textInput.jsx";
-
+import { openWhiteout, closeWhiteout } from "../../../actions/currentActions";
 export class Personnel extends Component {
   state = {
     editing: "",
-    showOverwriteAlert: false,
-    showGroupNameForm: false,
     pendingGroup: "",
     title: "",
     subTitle: "",
-    showNamesForm: false
+    currentGroup: {}
   };
+  handleNameGroup = () => {
+    const { openWhiteout, groups } = this.props;
+    openWhiteout("nameThisGroup", { saveThisGroup: this.saveThisGroup });
+  };
+
   handleSelectGroup = groupId => {
-    console.log("group selected", groupId);
-    this.setState({ showOverwriteWarning: true, pendingGroup: groupId });
+    const { openWhiteout, groups } = this.props;
+    const group = groups[groupId];
+
+    this.setState({ pendingGroup: groupId });
+    openWhiteout("overwriteWithGroup", {
+      confirm: this.confirmOverwrite,
+      group
+    });
   };
-  cancelSelectGroup = () => {
-    this.setState({ showOverwriteWarning: false, pendingGroup: "" });
-  };
+
   confirmOverwrite = () => {
-    const { currentSongId, groups, account, firestore } = this.props;
+    const { currentSongId, account, firestore, closeWhiteout } = this.props;
     const { peopleAttributeNames } = account;
     const groupId = this.state.pendingGroup;
-    const group = groups[groupId];
     const updateObj = Object.keys(peopleAttributeNames).reduce((obj, role) => {
-      obj[role] = group[role];
+      obj[role] = { groupId };
       return obj;
     }, {});
+    updateObj.groupId = groupId;
+    // const updateObj = Object.keys(peopleAttributeNames).reduce((obj, role) => {
+    //   obj[role] = group[role];
+    //   return obj;
+    // }, {});
     firestore
       .update(
         {
@@ -56,8 +67,8 @@ export class Personnel extends Component {
         },
         updateObj
       )
-      .then(() => {
-        this.setState({ showOverwriteWarning: false });
+      .then(response => {
+        closeWhiteout();
       });
     // console.log("pplAttributeNames", peopleAttributeNames);
     // console.log("currentSong", currentSong);
@@ -67,35 +78,45 @@ export class Personnel extends Component {
   openGroupNameForm = () => {
     this.setState({ showGroupNameForm: true });
   };
-  updateGroupName = e => {
-    const { value, name } = e.target;
-    console.log("namevalue", name, value);
-    this.setState({ [name]: value });
-  };
-  saveThisGroup = () => {
+
+  saveThisGroup = ({ title, subTitle }) => {
     const { currentSong, account, firestore, firebase } = this.props;
-    const { title, subTitle } = this.state;
     const { peopleAttributeNames } = account;
     const newGroup = Object.keys(peopleAttributeNames).reduce((obj, attr) => {
-      obj[attr] = currentSong[attr];
+      obj[attr] = currentSong[attr] || [];
       return obj;
     }, {});
-    // console.log("newGroup", newGroup);
-    // console.log("adminId", firebase.auth().currentUser.uid);
-    firestore.add(
-      {
-        collection: "groups"
-      },
-      {
-        ...newGroup,
-        adminId: firebase.auth().currentUser.uid,
-        title: title,
-        subTitle: subTitle
-      }
-    );
+    newGroup.title = title;
+    newGroup.subTitle = subTitle;
+    newGroup.adminId = firebase.auth().currentUser.uid;
+    console.log("newGroup", newGroup);
+    firestore
+      .add(
+        {
+          collection: "groups"
+        },
+        newGroup
+      )
+      .then(({ id }) => {
+        this.setState({ pendingGroup: id }, () => {
+          this.confirmOverwrite();
+        });
+      });
   };
   editThisRole = role => {
     this.setState({ editing: role });
+  };
+  handleEditOnGroupControlled = role => {
+    const { openWhiteout, currentSong, groups, songsArr } = this.props;
+    const songsUsingThisGroup = songsArr.filter(
+      s => s.groupId === currentSong.groupId
+    );
+    if (songsUsingThisGroup.length === 1) {
+      return console.log("youre it");
+    }
+    const group = groups[currentSong.groupId];
+    if (currentSong.groupId === "custom") return null;
+    openWhiteout("groupOrCustom", { currentSong, group, songsUsingThisGroup });
   };
 
   toggleRoleForPerson(role, personId, addRemove) {
@@ -105,11 +126,8 @@ export class Personnel extends Component {
     const adding = addRemove === "add";
     const removing = addRemove === "remove";
     if (removing) {
-      console.log(`removing ${personId} from ${role}`);
-      console.log("oldRoleArray", roleArray);
       newRoleArray = [...roleArray.filter(r => r !== personId)];
     } else if (adding) {
-      console.log(`adding ${personId} to ${role}`);
       newRoleArray = [...roleArray, personId];
     }
     firestore.update(
@@ -122,66 +140,24 @@ export class Personnel extends Component {
       }
     );
   }
-  overwriteAlert = (
-    <Container>
-      <Alert
-        color="danger"
-        isOpen={this.state.showOverwriteAlert}
-        className="text-center"
-      >
-        <Row>
-          <Col>
-            <p>Want to overwrite current personnel settings?</p>
-          </Col>
-        </Row>
-        <hr className="my-0" />
-        <Row>
-          <Col>
-            <Button color="primary" onClick={this.confirmOverwrite}>
-              yes, overwrite
-            </Button>
-          </Col>
-          <Col>
-            <Button className="btn-simple" onClick={this.cancelSelectGroup}>
-              cancel
-            </Button>
-          </Col>
-        </Row>
-      </Alert>
-    </Container>
-  );
-  groupNameForm = (
-    <Form onSubmit={this.onSubmit}>
-      {({ handleSubmit, pristine, values }) => (
-        <form onSubmit={handleSubmit}>
-          <TextInput
-            name="title"
-            placeholder="group title"
-            label="Group Title"
-          />
-        </form>
-      )}
-    </Form>
-  );
+  // groupNameForm = (
+  //   <Form onSubmit={this.onSubmit}>
+  //     {({ handleSubmit, pristine, values }) => (
+  //       <form onSubmit={handleSubmit}>
+  //         <TextInput
+  //           name="title"
+  //           placeholder="group title"
+  //           label="Group Title"
+  //         />
+  //       </form>
+  //     )}
+  //   </Form>
+  // );
   personnelTable() {
-    const { account, groups } = this.props;
+    const { account, groups, currentSong } = this.props;
     const { peopleAttributeNames } = account;
     return (
       <Container>
-        <Row>
-          <Col xs={12} md={3}>
-            {groups && (
-              <PersonnelGroupPicker
-                handleSelectGroup={this.handleSelectGroup}
-              />
-            )}
-            <Button onClick={this.openGroupNameForm}>Save This Group</Button>
-          </Col>
-          <Col xs={12} md={9}>
-            {this.state.showOverwriteAlert && this.overwriteAlert}
-            {this.state.showGroupNameForm && this.groupNameForm}
-          </Col>
-        </Row>
         <Row className="bg-light">
           {Object.keys(peopleAttributeNames).map(role => {
             return (
@@ -191,15 +167,59 @@ export class Personnel extends Component {
             );
           })}
         </Row>
+        <Row>
+          <Col xs={12} md={3} className="text-center">
+            {groups && (
+              <PersonnelGroupPicker
+                handleSelectGroup={this.handleSelectGroup}
+              />
+            )}
+          </Col>
+          <Col
+            xs={12}
+            md={6}
+            className="justify-content-center d-flex align-content-center-center"
+          >
+            {currentSong.groupId && currentSong.groupId !== "custom" ? (
+              <div>
+                <b className="text-uppercase">
+                  {groups[currentSong.groupId].title}
+                </b>{" "}
+                <span className="text-muted text-uppercase">
+                  {groups[currentSong.groupId].subTitle}
+                </span>
+              </div>
+            ) : (
+              "CUSTOM SETTINGS"
+            )}
+          </Col>
+          <Col xs={12} md={3} className="text-center">
+            <Button onClick={this.handleNameGroup} className="m-0">
+              Save This Group
+            </Button>
+            {/* {this.overwriteAlert} */}
+            {/* {this.state.showGroupNameForm && this.groupNameForm} */}
+          </Col>
+        </Row>
       </Container>
     );
   }
+
   roleCard = role => {
-    const { currentSong, people } = this.props;
+    const { currentSong, people, groups } = this.props;
     const editing = this.state.editing === role;
+    const songRole = currentSong[role] || [];
+    const groupControlled =
+      currentSong.groupId && currentSong.groupId !== "custom";
+    let currentRoleList;
+    if (groupControlled) {
+      currentRoleList = groups[currentSong.groupId][role];
+    } else {
+      currentRoleList = songRole;
+    }
     const peopleWithThisRole =
-      currentSong[role] &&
-      currentSong[role].map(personId => {
+      currentRoleList &&
+      currentRoleList.map(personId => {
         const person = people[personId];
         if (!person) return null;
         return (
@@ -228,8 +248,7 @@ export class Personnel extends Component {
       });
     const peopleWithoutThisRole = () => {
       const ids = Object.keys(people).filter(personId => {
-        if (!currentSong[role]) return true;
-        return !currentSong[role].includes(personId);
+        return !currentRoleList.includes(personId);
       });
       return ids.map(personId => {
         const person = people[personId];
@@ -252,7 +271,7 @@ export class Personnel extends Component {
       <Card className="mt-2">
         <CardHeader>
           <h6 className="text-muted">
-            {pluralize(role, currentSong[role] && currentSong[role].length)}
+            {pluralize(role, currentRoleList && currentRoleList.length)}
           </h6>
         </CardHeader>
         <ListGroup action="true" flush>
@@ -270,7 +289,11 @@ export class Personnel extends Component {
           ) : (
             <Button
               className="btn-info btn-link btn-block btn-sm"
-              onClick={() => this.editThisRole(role)}
+              onClick={() => {
+                groupControlled
+                  ? this.handleEditOnGroupControlled(role)
+                  : this.editThisRole(role);
+              }}
             >
               edit
             </Button>
@@ -309,9 +332,17 @@ const mapState = state => ({
   currentResourceType: state.current.resourceType,
   people: state.firestore.data.people,
   account: state.firestore.ordered.accounts[0],
-  groups: state.firestore.data.groups
+  groups: state.firestore.data.groups,
+  songsArr: state.firestore.ordered.songs
 });
+const mapDispatch = {
+  openWhiteout,
+  closeWhiteout
+};
 export default compose(
-  connect(mapState),
+  connect(
+    mapState,
+    mapDispatch
+  ),
   firestoreConnect()
 )(Personnel);

@@ -14,3 +14,15 @@ export const CLOSE_MODAL = "CLOSE_MODAL";
 export const closeModal = () => ({
   type: CLOSE_MODAL
 });
+
+export const OPEN_WHITEOUT = "OPEN_WHITEOUT";
+export const openWhiteout = (name, whiteoutProps) => ({
+  type: OPEN_WHITEOUT,
+  name,
+  whiteoutProps
+});
+
+export const CLOSE_WHITEOUT = "CLOSE_WHITEOUT";
+export const closeWhiteout = () => ({
+  type: CLOSE_WHITEOUT
+});

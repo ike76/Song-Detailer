@@ -6,13 +6,23 @@ import {
   DropdownItem
 } from "reactstrap";
 import { connect } from "react-redux";
+//
 import LoadingSpinner from "../../../components/loadingSpinner";
-
+import { formatGroup } from "../../../helpers";
 export class PersonnelGroupPicker extends Component {
   state = {
     groupSelectedId: "",
     dropdownOpen: false
   };
+  componentDidMount() {
+    const { groupId } = this.props;
+    if (groupId) this.setState({ groupSelectedId: groupId });
+    console.log("mounted with group id");
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.groupId !== this.props.groupId)
+      this.setState({ groupSelectedId: this.props.groupId });
+  }
   toggleDropdown = () => {
     this.setState({ dropdownOpen: !this.state.dropdownOpen });
   };
@@ -20,38 +30,47 @@ export class PersonnelGroupPicker extends Component {
     this.setState({ groupSelectedId: groupId });
     this.props.handleSelectGroup(groupId);
   };
-  formatGroup = group => (
-    <span className="d-inline-block text-center text-uppercase ">
-      <p className="m-0">
-        <b>{group.title}</b>
-      </p>
-      <small className="m-0">{group.subTitle}</small>
-    </span>
-  );
+  // formatGroup = group => {
+  //   if (!group) return null;
+  //   return (
+  //     <span className="d-inline-block text-center text-uppercase ">
+  //       <p className="m-0">
+  //         <b>{group.title}</b>
+  //       </p>
+  //       <small className="m-0">{group.subTitle}</small>
+  //     </span>
+  //   );
+  // };
 
   groupDropdown() {
-    const { groups } = this.props;
+    const { groups, disabled } = this.props;
     const selectedGroup = groups[this.state.groupSelectedId];
     return (
-      <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
-        <DropdownToggle caret>
-          {selectedGroup ? this.formatGroup(selectedGroup) : "select a group"}
+      <Dropdown
+        direction="up"
+        isOpen={this.state.dropdownOpen}
+        toggle={this.toggleDropdown}
+      >
+        <DropdownToggle caret disabled={disabled} className="my-0">
+          {selectedGroup ? formatGroup(selectedGroup) : "select a group"}
         </DropdownToggle>
         <DropdownMenu>
-          {Object.keys(groups).map(groupId => {
-            const group = groups[groupId];
-            return (
-              <Fragment key={groupId}>
-                <DropdownItem
-                  className="p-1 text-center"
-                  onClick={() => this.selectGroup(groupId)}
-                >
-                  {this.formatGroup(group)}
-                </DropdownItem>
-                <DropdownItem divider />
-              </Fragment>
-            );
-          })}
+          <div style={{ overflow: "auto", maxHeight: "15rem" }}>
+            {Object.keys(groups).map(groupId => {
+              const group = groups[groupId];
+              return (
+                <Fragment key={groupId}>
+                  <DropdownItem
+                    className="p-1 text-center"
+                    onClick={() => this.selectGroup(groupId)}
+                  >
+                    {formatGroup(group)}
+                  </DropdownItem>
+                  <DropdownItem divider />
+                </Fragment>
+              );
+            })}
+          </div>
         </DropdownMenu>
       </Dropdown>
     );

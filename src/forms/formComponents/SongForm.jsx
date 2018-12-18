@@ -13,6 +13,7 @@ import AutoSuggester from "./autoSuggester.jsx";
 import { categories } from "./SongFormNav.jsx";
 import Basics from "./songFormPages/Basics.jsx";
 import Personnel2 from "./songFormPages/Personnel2.jsx";
+import WhiteOut from "../../components/Modals/WhiteOut.jsx";
 //
 
 export class SongForm extends Component {
@@ -81,7 +82,9 @@ export class SongForm extends Component {
                   people={people}
                 />
               ),
-              Personnel: <Personnel2 />,
+              Personnel: (
+                <Personnel2 handleShowWhiteOut={this.handleShowWhiteOut} />
+              ),
               Vibes: (
                 <Col xs={12} md={4}>
                   <AutoSuggester
@@ -106,32 +109,18 @@ export class SongForm extends Component {
             return (
               <form onSubmit={handleSubmit}>
                 <CardBody>
-                  <Row>
-                    <Swiper index={this.props.page}>
-                      {categories.map(page => {
-                        return (
-                          <Container key={page}>{pageMap[page]}</Container>
-                        );
-                      })}
-                    </Swiper>
+                  <Row style={{ position: "relative" }}>
+                    <WhiteOut>
+                      <Swiper index={this.props.page}>
+                        {categories.map(page => {
+                          return (
+                            <Container key={page}>{pageMap[page]}</Container>
+                          );
+                        })}
+                      </Swiper>
+                    </WhiteOut>
                   </Row>
                 </CardBody>
-                <CardFooter>
-                  <Button
-                    disabled={pristine}
-                    color={pristine ? "muted" : "primary"}
-                    outline={pristine}
-                  >
-                    {songId === "new"
-                      ? "Create New"
-                      : pristine
-                      ? "Saved"
-                      : "Save Changes"}
-                  </Button>
-                  <Row>
-                    <Col>{showMe(values, "values")}</Col>
-                  </Row>
-                </CardFooter>
               </form>
             );
           }}

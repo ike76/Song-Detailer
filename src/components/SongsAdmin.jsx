@@ -35,7 +35,7 @@ export class SongsAdmin extends Component {
                 currentOptionId={currentSongId}
                 resourceType={"songs"}
                 resourceSingular="song"
-                formatter={song => song.title}
+                formatter={song => song && song.title}
               />
             </Col>
             <Col xs={12} md={8} className="order-md-0">
