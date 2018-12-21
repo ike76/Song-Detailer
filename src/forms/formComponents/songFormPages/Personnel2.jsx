@@ -8,10 +8,9 @@ import {
   Card,
   CardHeader,
   CardFooter,
-  Container,
-  Alert
+  Container
 } from "reactstrap";
-import { Form } from "react-final-form";
+import { withRouter, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
@@ -20,7 +19,6 @@ import classnames from "classnames";
 //
 import LoadingSpinner from "../../../components/loadingSpinner.jsx";
 import PersonnelGroupPicker from "./PersonnelGroupPicker.jsx";
-import TextInput from "../textInput.jsx";
 import { openWhiteout, closeWhiteout } from "../../../actions/currentActions";
 export class Personnel extends Component {
   state = {
@@ -31,7 +29,7 @@ export class Personnel extends Component {
     currentGroup: {}
   };
   handleNameGroup = () => {
-    const { openWhiteout, groups } = this.props;
+    const { openWhiteout } = this.props;
     openWhiteout("nameThisGroup", { saveThisGroup: this.saveThisGroup });
   };
 
@@ -55,10 +53,6 @@ export class Personnel extends Component {
       return obj;
     }, {});
     updateObj.groupId = groupId;
-    // const updateObj = Object.keys(peopleAttributeNames).reduce((obj, role) => {
-    //   obj[role] = group[role];
-    //   return obj;
-    // }, {});
     firestore
       .update(
         {
@@ -70,15 +64,10 @@ export class Personnel extends Component {
       .then(response => {
         closeWhiteout();
       });
-    // console.log("pplAttributeNames", peopleAttributeNames);
-    // console.log("currentSong", currentSong);
-    // console.log("group", group);
-    // console.log("update obj", updateObj);
   };
   openGroupNameForm = () => {
     this.setState({ showGroupNameForm: true });
   };
-
   saveThisGroup = ({ title, subTitle }) => {
     const { currentSong, account, firestore, firebase } = this.props;
     const { peopleAttributeNames } = account;
@@ -107,18 +96,45 @@ export class Personnel extends Component {
     this.setState({ editing: role });
   };
   handleEditOnGroupControlled = role => {
-    const { openWhiteout, currentSong, groups, songsArr } = this.props;
+    const { openWhiteout, currentSong, groups, songsArr, history } = this.props;
     const songsUsingThisGroup = songsArr.filter(
       s => s.groupId === currentSong.groupId
     );
     if (songsUsingThisGroup.length === 1) {
-      return console.log("youre it");
+      return history.push(`/admin/groups/${currentSong.groupId}`);
     }
-    const group = groups[currentSong.groupId];
     if (currentSong.groupId === "custom") return null;
-    openWhiteout("groupOrCustom", { currentSong, group, songsUsingThisGroup });
+    const group = groups[currentSong.groupId];
+    openWhiteout("groupOrCustom", {
+      currentSong,
+      group,
+      songsUsingThisGroup,
+      convertToCustomGroup: this.convertToCustomGroup
+    });
   };
-
+  convertToCustomGroup = () => {
+    const {
+      groups,
+      currentSong,
+      currentSongId,
+      account,
+      firestore
+    } = this.props;
+    const { peopleAttributeNames } = account;
+    const oldGroup = groups[currentSong.groupId];
+    const songUpdate = Object.keys(peopleAttributeNames).reduce((obj, attr) => {
+      obj[attr] = oldGroup[attr];
+      return obj;
+    }, {});
+    songUpdate.groupId = "custom";
+    firestore.update(
+      {
+        collection: "songs",
+        doc: currentSongId
+      },
+      songUpdate
+    );
+  };
   toggleRoleForPerson(role, personId, addRemove) {
     const { firestore, currentSong, currentSongId } = this.props;
     const roleArray = currentSong[role] || [];
@@ -172,6 +188,8 @@ export class Personnel extends Component {
             {groups && (
               <PersonnelGroupPicker
                 handleSelectGroup={this.handleSelectGroup}
+                direction="up"
+                groupId={currentSong.groupId}
               />
             )}
           </Col>
@@ -181,24 +199,24 @@ export class Personnel extends Component {
             className="justify-content-center d-flex align-content-center-center"
           >
             {currentSong.groupId && currentSong.groupId !== "custom" ? (
-              <div>
+              <Link to={`/admin/groups/${currentSong.groupId}`}>
                 <b className="text-uppercase">
                   {groups[currentSong.groupId].title}
                 </b>{" "}
                 <span className="text-muted text-uppercase">
                   {groups[currentSong.groupId].subTitle}
                 </span>
-              </div>
+              </Link>
             ) : (
               "CUSTOM SETTINGS"
             )}
           </Col>
           <Col xs={12} md={3} className="text-center">
-            <Button onClick={this.handleNameGroup} className="m-0">
-              Save This Group
-            </Button>
-            {/* {this.overwriteAlert} */}
-            {/* {this.state.showGroupNameForm && this.groupNameForm} */}
+            {currentSong.groupId === "custom" ? (
+              <Button onClick={this.handleNameGroup} className="m-0">
+                Save This Group
+              </Button>
+            ) : null}
           </Col>
         </Row>
       </Container>
@@ -344,5 +362,6 @@ export default compose(
     mapState,
     mapDispatch
   ),
-  firestoreConnect()
+  firestoreConnect(),
+  withRouter
 )(Personnel);

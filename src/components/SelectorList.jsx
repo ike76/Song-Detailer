@@ -47,6 +47,7 @@ class SelectorList extends Component {
               <option>{`Select a ${resourceSingular}`}</option>
               {Object.keys(listOptions).map((resourceId, i) => {
                 const resource = listOptions[resourceId];
+                if (!resource) return null;
                 return (
                   <option key={resourceId} value={resourceId}>
                     {formatter(resource)}

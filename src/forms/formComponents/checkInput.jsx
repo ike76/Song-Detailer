@@ -3,14 +3,21 @@ import { Field } from "react-final-form";
 import { FormGroup, Input, Label } from "reactstrap";
 import classnames from "classnames";
 
-const CheckInput = ({ name, option }) => {
+const CheckInput = ({ name, option, callback }) => {
   return (
     <Field name={name} value={option.value} type="checkbox">
       {({ input, meta }) => {
         return (
           <FormGroup check>
             <Label check>
-              <Input {...input} type="checkbox" />
+              <Input
+                {...input}
+                onChange={e => {
+                  callback(e);
+                  input.onChange(e);
+                }}
+                type="checkbox"
+              />
               <span className="form-check-sign">
                 <span className="check" />
               </span>

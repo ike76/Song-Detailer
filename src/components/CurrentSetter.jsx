@@ -38,17 +38,18 @@ class CurrentSetter extends Component {
   }
   render() {
     return (
-      <div>
-        <ul>
-          <li>section: {this.state.currentSection}</li>
-          <li>id: {this.state.currentId}</li>
-          <li className="d-block d-sm-none">SM</li>
-          <li className="d-none d-sm-block d-md-none">SM</li>
-          <li className="d-none d-md-block d-lg-none">MD</li>
-          <li className="d-none d-lg-block d-xl-none">LG</li>
-          <li className="d-none d-xl-block ">XL</li>
-        </ul>
-      </div>
+      <div />
+      // <div>
+      //   <ul>
+      //     <li>section: {this.state.currentSection}</li>
+      //     <li>id: {this.state.currentId}</li>
+      //     <li className="d-block d-sm-none">SM</li>
+      //     <li className="d-none d-sm-block d-md-none">SM</li>
+      //     <li className="d-none d-md-block d-lg-none">MD</li>
+      //     <li className="d-none d-lg-block d-xl-none">LG</li>
+      //     <li className="d-none d-xl-block ">XL</li>
+      //   </ul>
+      // </div>
     );
   }
 }

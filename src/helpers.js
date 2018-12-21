@@ -1,5 +1,5 @@
 import React from "react";
-
+import styled from "styled-components";
 export const showMe = (obj, name) => (
   <div>
     <small className="text-faded d-block">{name}</small>
@@ -25,6 +25,35 @@ export const formatGroup = group => {
   );
 };
 
-// export const alphabetize = arrayOfPersonIds => {
-//   return arrayOfPersonIds.sort((a, b) => a.lastName - b.lastName);
-// };
+export const StyledForm = styled.form`
+  input::placeholder {
+    color: #6c757d7a;
+  }
+`;
+
+export const StyledGrid = styled.div`
+${p =>
+  p.show
+    ? `
+.col-1,
+.col-2,
+.col-3,
+.col-4,
+.col-5,
+.col-6,
+.col-7,
+.col-8,
+.col-9,
+.col-10,
+.col-11,
+.col-12,
+.col {
+  border: 1px dashed #ff000029;
+}
+.row, .form-row {
+  border: 1px dashed #00800073;
+
+`
+    : ""}
+  }
+`;

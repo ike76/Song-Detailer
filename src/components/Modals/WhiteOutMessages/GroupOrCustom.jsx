@@ -15,7 +15,8 @@ const GroupOrCustom = ({
   currentSong,
   group,
   history,
-  songsUsingThisGroup
+  songsUsingThisGroup,
+  convertToCustomGroup
 }) => {
   const { groupId, title } = currentSong;
   return (
@@ -61,7 +62,14 @@ const GroupOrCustom = ({
             </p>
           </Col>
           <Col className="border rounded text-center m-2">
-            <Button>USE CUSTOM SETTINGS</Button>
+            <Button
+              onClick={() => {
+                convertToCustomGroup();
+                cancel();
+              }}
+            >
+              USE CUSTOM SETTINGS
+            </Button>
             <p>
               ...which can be saved as a <em>NEW GROUP</em> if you want
             </p>

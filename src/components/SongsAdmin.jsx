@@ -7,7 +7,8 @@ import {
   Col,
   Row,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
+  Button
 } from "reactstrap";
 import { Link } from "react-router-dom";
 //
@@ -16,14 +17,14 @@ import SelectorList from "./SelectorList.jsx";
 import SongForm from "../forms/formComponents/SongForm.jsx";
 import SongFormNav from "../forms/formComponents/SongFormNav";
 import { showMe } from "../helpers";
+
 export class SongsAdmin extends Component {
-  state = { songFormPage: 1 };
+  state = { songFormPage: 0 };
   setSongFormPage = index => {
     this.setState({ songFormPage: index });
   };
   songCard() {
     const { songs, currentSongId } = this.props;
-    console.log("currentSongId", currentSongId);
     return (
       <Card>
         <CardHeader className="bg-light">
@@ -42,6 +43,7 @@ export class SongsAdmin extends Component {
               <SongFormNav
                 setSongFormPage={this.setSongFormPage}
                 currentPage={this.state.songFormPage}
+                songUnsaved={currentSongId === "new"}
               />
             </Col>
           </Row>
@@ -68,42 +70,49 @@ export class SongsAdmin extends Component {
                 currentOptionId={currentSongId}
                 resourceType={"songs"}
                 resourceSingular="song"
-                formatter={song => song.title}
+                formatter={song => song && song.title}
               />
             </Col>
             <Col xs={12} md={8} className="order-md-0">
-              <div>something here</div>
+              <Link to="/admin/songs/new">
+                <Button>Add New Song</Button>
+              </Link>
             </Col>
           </Row>
         </CardHeader>
         <CardBody>
-          <Row className="d-flex justify-content-center " />
           <Row>
             <Col>
               <ListGroup flush>
                 {Object.keys(songs).map(songId => {
                   const song = songs[songId];
+                  if (!song) return null;
                   return (
-                    <Link
-                      key={songId}
-                      to={`/admin/songs/${songId}`}
-                      className="text-secondary"
-                    >
-                      <ListGroupItem action>
-                        <strong className="text-uppercase">{song.title}</strong>{" "}
-                        <span className="text-muted">
-                          {" "}
-                          •{" "}
-                          {groups &&
-                            groups[song.artist] &&
-                            groups[song.artist].title}
-                        </span>
-                      </ListGroupItem>
-                    </Link>
+                    <ListGroupItem action>
+                      <Link
+                        key={songId}
+                        to={`/admin/songs/${songId}`}
+                        className="text-secondary"
+                      >
+                        <strong className="text-uppercase">{song.title}</strong>
+                      </Link>
+
+                      {groups && groups[song.groupId] && (
+                        <div className="text-muted text-uppercase d-inline">
+                          {"  "}•{"  "}
+                          <Link to={`/admin/groups/${song.groupId}`}>
+                            <span>{groups[song.groupId].title}</span>{" "}
+                            <span className="font-weight-light">
+                              {groups[song.groupId].subTitle}
+                            </span>
+                          </Link>
+                        </div>
+                      )}
+                    </ListGroupItem>
                   );
                 })}
               </ListGroup>
-              {showMe(songs, "songs")}
+              {/* {showMe(songs, "songs")} */}
             </Col>
           </Row>
         </CardBody>

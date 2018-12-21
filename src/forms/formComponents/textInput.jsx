@@ -3,7 +3,9 @@ import { Field } from "react-final-form";
 import { FormGroup, Input, Label, FormText } from "reactstrap";
 import classnames from "classnames";
 import PropTypes from "prop-types";
-const TextInput = ({ name, label, placeholder }) => {
+import "@gouch/to-title-case";
+
+const TextInput = ({ name, label, placeholder, titleCase }) => {
   return (
     <Field name={name}>
       {({ input, meta }) => {
@@ -15,6 +17,7 @@ const TextInput = ({ name, label, placeholder }) => {
             {label && <Label>{label}</Label>}
             <Input
               {...input}
+              value={titleCase ? input.value.toTitleCase() : input.value}
               placeholder={placeholder || label}
               className={classnames({
                 "border-danger": touched && error

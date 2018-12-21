@@ -1,12 +1,19 @@
 import React, { Component } from "react";
-import { Image, Transformation } from "cloudinary-react";
 import axios from "axios";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import Dropzone from "react-dropzone";
 import LoadingSpinner from "./loadingSpinner";
+import styled from "styled-components";
+//
+import { ImageBox } from "../forms/formComponents/PeopleForm2.jsx";
 const CLOUDINARY_API_KEY = process.env.REACT_APP_CLOUDINARY_API_KEY;
+
+const Container = styled.div`
+  width: 100%;
+  border: none;
+`;
 
 export class ImageDisplayer extends Component {
   state = {
@@ -17,10 +24,12 @@ export class ImageDisplayer extends Component {
     // this.setState({ public_id: this.props.profileImage });
   }
   updateFirestore = public_id => {
+    const { person } = this.props;
+
     return this.props.firestore.update(
       {
         collection: "people",
-        doc: this.props.currentPersonId
+        doc: person.id
       },
       {
         profileImage: public_id
@@ -53,7 +62,7 @@ export class ImageDisplayer extends Component {
     });
   };
   render() {
-    const { person } = this.props;
+    const { person, editing } = this.props;
     let public_id = this.state.publicId || (person && person.profileImage);
     return (
       <>
@@ -61,43 +70,38 @@ export class ImageDisplayer extends Component {
           onDrop={images => this.handleUploadImages(images)}
           multiple
           accept="image/*"
-          className=""
+          style={{ border: "none", position: "relative" }}
         >
-          {this.state.uploading ? (
-            <LoadingSpinner />
-          ) : !public_id ? (
-            <img
-              src="https://via.placeholder.com/200x200?text=Drop+Image+Here"
-              alt="drop profile img here"
-            />
-          ) : (
-            <Image
-              cloudName="homecomp"
-              publicId={public_id}
-              className="d-block"
-              alt={
-                person &&
-                `profile image of ${person.firstName} ${person.lastName}`
-              }
-            >
-              <Transformation
-                gravity="face:center"
-                aspectRatio="1:1"
-                // height="200"
-                width="200"
-                crop="fill"
-              />
-            </Image>
-          )}
+          {props => {
+            return (
+              <Container
+              // isDragActive={isDragActive}
+              // isDragReject={isDragReject}
+              // {...getRootProps()}
+              >
+                {this.state.uploading ? (
+                  <LoadingSpinner />
+                ) : !public_id ? (
+                  <img
+                    src="https://via.placeholder.com/200x200?text=Drop+Image+Here"
+                    alt="drop profile img here"
+                  />
+                ) : (
+                  <>
+                    <ImageBox url={public_id} editing={editing}>
+                      <h5 style={{ zIndex: 1 }}>Drag new photo here</h5>
+                    </ImageBox>
+                  </>
+                )}
+              </Container>
+            );
+          }}
         </Dropzone>
       </>
     );
   }
 }
-const mapState = (state, props) => ({
-  person: props.person,
-  currentPersonId: state.current.personId
-});
+const mapState = (state, props) => ({});
 export default compose(
   connect(mapState),
   firestoreConnect()

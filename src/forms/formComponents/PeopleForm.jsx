@@ -99,13 +99,6 @@ export class StakeHoldersForm extends Component {
                           placeholder="Email"
                         />
                       </Col>
-                      <Col xs={12} sm={6}>
-                        <CheckboxGroup
-                          label="Default Roles"
-                          options={attrNameOptions}
-                          name="Roles"
-                        />
-                      </Col>
                     </Row>
                     <Row />
                     <Row />

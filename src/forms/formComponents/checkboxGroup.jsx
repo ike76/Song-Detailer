@@ -10,7 +10,7 @@ const CheckboxGroup = ({ options, label, ...props }) => {
       <Label>
         {label}
         <button className=" btn-link">
-          <small>ADD NEW</small>
+          {/* <small>ADD NEW</small> */}
           {/* TODO add thing from here */}
         </button>
       </Label>

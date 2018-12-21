@@ -60,72 +60,45 @@ export class SongForm extends Component {
   };
 
   formDisplay = () => {
-    const { song, songId, peopleAttributes, people, groups } = this.props;
+    const { song, songId, peopleAttributes, people, groups, page } = this.props;
+    const vibesPage = <div>dummy Vibes Page</div>;
+    const filesPage = <div>dummy Files Page</div>;
+    const soundsPage = <div>dummy Sounds Page</div>;
+    const topicsPage = <div>dummy Topics Page</div>;
+    const pageMap = {
+      Basics: <Basics songId={songId} />,
+      Personnel: <Personnel2 handleShowWhiteOut={this.handleShowWhiteOut} />,
+      Vibes: (
+        <Col xs={12} md={4}>
+          <AutoSuggester
+            attribute="styleDescription"
+            label="Style Tags"
+            placeholder="add styles"
+            key={songId}
+            options={[
+              { name: "Happy", value: "Happy" },
+              { name: "Sad", value: "Sad" },
+              { name: "Stupid", value: "Stupid" },
+              { name: "Foggy", value: "Foggy" },
+              { name: "Stinky", value: "Stinky" },
+              { name: "Sleepy", value: "Sleepy" }
+            ]}
+          />
+        </Col>
+      ),
+      Sounds: soundsPage,
+      Topics: topicsPage
+    };
     return (
-      <>
-        {/* {showMe(peopleAttributes, "peopleAttributes")}
-      {showMe(people, "people")} */}
-        <Form onSubmit={this.onSubmit} initialValues={song}>
-          {({ handleSubmit, pristine, values }) => {
-            // const vibesPage = <div>dummy Vibes Page</div>;
-            // const filesPage = <div>dummy Files Page</div>;
-            const soundsPage = <div>dummy Sounds Page</div>;
-            const topicsPage = <div>dummy Topics Page</div>;
-            const pageMap = {
-              // Files: filesPage,
-              Basics: (
-                <Basics
-                  // key={songId}
-                  peopleAttributes={peopleAttributes}
-                  groups={groups}
-                  songId={songId}
-                  people={people}
-                />
-              ),
-              Personnel: (
-                <Personnel2 handleShowWhiteOut={this.handleShowWhiteOut} />
-              ),
-              Vibes: (
-                <Col xs={12} md={4}>
-                  <AutoSuggester
-                    attribute="styleDescription"
-                    label="Style Tags"
-                    placeholder="add styles"
-                    key={songId}
-                    options={[
-                      { name: "Happy", value: "Happy" },
-                      { name: "Sad", value: "Sad" },
-                      { name: "Stupid", value: "Stupid" },
-                      { name: "Foggy", value: "Foggy" },
-                      { name: "Stinky", value: "Stinky" },
-                      { name: "Sleepy", value: "Sleepy" }
-                    ]}
-                  />
-                </Col>
-              ),
-              Sounds: soundsPage,
-              Topics: topicsPage
-            };
-            return (
-              <form onSubmit={handleSubmit}>
-                <CardBody>
-                  <Row style={{ position: "relative" }}>
-                    <WhiteOut>
-                      <Swiper index={this.props.page}>
-                        {categories.map(page => {
-                          return (
-                            <Container key={page}>{pageMap[page]}</Container>
-                          );
-                        })}
-                      </Swiper>
-                    </WhiteOut>
-                  </Row>
-                </CardBody>
-              </form>
-            );
-          }}
-        </Form>
-      </>
+      <CardBody style={{ position: "relative" }}>
+        <WhiteOut>
+          {/* <Swiper index={page}> */}
+          {/* {categories.map(page => { */}
+          <Container key={page}>{pageMap[categories[page]]}</Container>
+          {/* })} */}
+          {/* </Swiper> */}
+        </WhiteOut>
+      </CardBody>
     );
   };
   render() {

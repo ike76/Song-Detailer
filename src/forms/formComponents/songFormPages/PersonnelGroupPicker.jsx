@@ -30,24 +30,13 @@ export class PersonnelGroupPicker extends Component {
     this.setState({ groupSelectedId: groupId });
     this.props.handleSelectGroup(groupId);
   };
-  // formatGroup = group => {
-  //   if (!group) return null;
-  //   return (
-  //     <span className="d-inline-block text-center text-uppercase ">
-  //       <p className="m-0">
-  //         <b>{group.title}</b>
-  //       </p>
-  //       <small className="m-0">{group.subTitle}</small>
-  //     </span>
-  //   );
-  // };
 
   groupDropdown() {
-    const { groups, disabled } = this.props;
+    const { groups, disabled, direction, groupId } = this.props;
     const selectedGroup = groups[this.state.groupSelectedId];
     return (
       <Dropdown
-        direction="up"
+        direction={direction}
         isOpen={this.state.dropdownOpen}
         toggle={this.toggleDropdown}
       >
@@ -55,26 +44,29 @@ export class PersonnelGroupPicker extends Component {
           {selectedGroup ? formatGroup(selectedGroup) : "select a group"}
         </DropdownToggle>
         <DropdownMenu>
-          <div style={{ overflow: "auto", maxHeight: "15rem" }}>
-            {Object.keys(groups).map(groupId => {
-              const group = groups[groupId];
-              return (
-                <Fragment key={groupId}>
-                  <DropdownItem
-                    className="p-1 text-center"
-                    onClick={() => this.selectGroup(groupId)}
-                  >
-                    {formatGroup(group)}
-                  </DropdownItem>
-                  <DropdownItem divider />
-                </Fragment>
-              );
-            })}
+          <div style={{ overflow: "auto", maxHeight: "100vh" }}>
+            {Object.keys(groups)
+              .filter(gid => gid !== groupId)
+              .map(_groupId => {
+                const group = groups[_groupId];
+                return (
+                  <Fragment key={_groupId}>
+                    <DropdownItem
+                      className="p-1 text-center"
+                      onClick={() => this.selectGroup(_groupId)}
+                    >
+                      {formatGroup(group)}
+                    </DropdownItem>
+                    <DropdownItem divider />
+                  </Fragment>
+                );
+              })}
           </div>
         </DropdownMenu>
       </Dropdown>
     );
   }
+  groupSelect() {}
   render() {
     const { groups } = this.props;
     if (groups) {

@@ -2,7 +2,10 @@ import React from "react";
 import { Field } from "react-final-form";
 import { FormGroup, Input, Label } from "reactstrap";
 import PropTypes from "prop-types";
-const SelectInput = ({ name, label, options }) => {
+
+const SelectInput = ({ name, label, options, resource }) => {
+  const customOption = { display: `no ${resource}`, value: "custom" };
+  options = (options && [customOption, ...options]) || [customOption];
   return (
     <Field name={name}>
       {({ input, meta }) => {
@@ -30,7 +33,8 @@ SelectInput.propTypes = {
       display: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired
     })
-  )
+  ),
+  resource: PropTypes.string
 };
 
 export default SelectInput;

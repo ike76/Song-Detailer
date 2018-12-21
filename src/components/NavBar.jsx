@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import { compose } from "redux";
 import {
   Collapse,
   Container,
@@ -9,7 +10,11 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink
+  NavLink,
+  UncontrolledDropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownMenu
 } from "reactstrap";
 import { openModal } from "../actions/currentActions";
 //
@@ -25,7 +30,7 @@ class NavBarMine extends Component {
   };
 
   render() {
-    const { signedIn } = this.props;
+    const { signedIn, history } = this.props;
     return (
       <div>
         <Navbar color="primary" expand="sm">
@@ -39,11 +44,25 @@ class NavBarMine extends Component {
 
             <Collapse id="navbarContent" isOpen={this.state.isOpen} navbar>
               <Nav className="ml-auto" navbar>
-                <NavItem>
-                  <Link className="nav-link" to="/admin">
-                    ADMIN
-                  </Link>
-                </NavItem>
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle nav caret>
+                    Admin
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem onClick={() => history.push(`/admin/songs`)}>
+                      Songs
+                    </DropdownItem>
+                    <DropdownItem onClick={() => history.push(`/admin/albums`)}>
+                      Albums
+                    </DropdownItem>
+                    <DropdownItem onClick={() => history.push(`/admin/people`)}>
+                      People
+                    </DropdownItem>
+                    <DropdownItem onClick={() => history.push(`/admin/groups`)}>
+                      Groups
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
                 <NavItem>
                   <NavLink
                     as="a"
@@ -71,7 +90,10 @@ const mapState = state => ({
 const mapDispatch = {
   openModal
 };
-export default connect(
-  mapState,
-  mapDispatch
+export default compose(
+  connect(
+    mapState,
+    mapDispatch
+  ),
+  withRouter
 )(NavBarMine);

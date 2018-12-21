@@ -4,11 +4,13 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { firestoreConnect } from "react-redux-firebase";
 import { Nav, NavItem } from "reactstrap";
+import classnames from "classnames";
 //
 import PeopleAdmin from "../components/PeopleAdmin.jsx";
 import SongsAdmin from "../components/SongsAdmin.jsx";
 import GroupsAdmin from "../components/GroupsAdmin";
 import CurrentSetter from "../components/CurrentSetter.jsx";
+import AlbumsAdmin from "../components/AlbumsAdmin.jsx";
 
 export class AdminPage extends Component {
   state = {
@@ -38,6 +40,12 @@ export class AdminPage extends Component {
         key={this.props.match.params.id}
         groupId={this.props.match.params.id}
       />
+    ),
+    albums: (
+      <AlbumsAdmin
+        key={this.props.match.params.id}
+        groupId={this.props.match.params.id}
+      />
     )
   };
   render() {
@@ -47,25 +55,20 @@ export class AdminPage extends Component {
           key={this.props.match.url}
           id={this.props.match.params.id}
         />
-        <h1>Admin Page</h1>
         <Nav pills>
-          <NavItem>
-            <Link className="nav-link" to="/admin/songs">
-              Songs
-            </Link>
-          </NavItem>
-          <NavItem>
-            <Link className="nav-link" to="/admin/people">
-              People
-            </Link>
-          </NavItem>
-          <NavItem>
-            <Link className="nav-link" to="/admin/groups">
-              Groups
-            </Link>
-          </NavItem>
+          {["songs", "albums", "people", "groups"].map(section => (
+            <NavItem key={section}>
+              <Link
+                className={classnames("nav-link", {
+                  active: this.props.match.params.section === section
+                })}
+                to={`/admin/${section}`}
+              >
+                <span class="text-capitalize">{section}</span>
+              </Link>
+            </NavItem>
+          ))}
         </Nav>
-        <hr />
         {this.subPages[this.props.match.params.section]}
       </div>
     );

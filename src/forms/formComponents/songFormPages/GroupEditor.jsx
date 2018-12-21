@@ -243,7 +243,7 @@ export class GroupEditor extends Component {
           <WhiteOut>
             <Row className="p-2">
               <Col xs={12} md={8} className="text-center">
-                <h3 className="mb-0">
+                <h3 className="mb-0 text-uppercase">
                   <b>{currentGroup.title}</b>{" "}
                   <em class="text-muted">{currentGroup.subTitle}</em>
                 </h3>
@@ -267,15 +267,46 @@ export class GroupEditor extends Component {
               </Col>
             </Row>
             <Row className="bg-light">
-              {noGroupSelected
-                ? this.showAllGroups()
-                : Object.keys(peopleAttributeNames).map(role => {
+              {noGroupSelected ? (
+                this.showAllGroups()
+              ) : (
+                <>
+                  {Object.keys(peopleAttributeNames).map(role => {
                     return (
                       <Col key={role} xs={12} sm={6} md={4} lg={3}>
                         {this.roleCard(role)}
                       </Col>
                     );
                   })}
+                  <Col xs={12} md={8} lg={6}>
+                    <Card>
+                      <CardHeader>Songs</CardHeader>
+                      <CardBody>
+                        <ListGroup flush>
+                          {this.props.songs
+                            .filter(s => s.groupId === currentGroupId)
+                            .map(song => {
+                              return (
+                                <ListGroupItem className="p-0">
+                                  <Button
+                                    className="btn-link"
+                                    onClick={() =>
+                                      this.props.history.push(
+                                        `/admin/songs/${song.id}`
+                                      )
+                                    }
+                                  >
+                                    {song.title}
+                                  </Button>
+                                </ListGroupItem>
+                              );
+                            })}
+                        </ListGroup>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </>
+              )}
             </Row>
             <Row className="d-flex justify-content-end">
               <Button
@@ -377,7 +408,7 @@ export class GroupEditor extends Component {
     );
   };
   render() {
-    const { people, account, groups, currentGroupId } = this.props;
+    const { people, account, groups } = this.props;
     if (people && account && groups) {
       return this.personnelTable();
     } else {
@@ -391,6 +422,7 @@ const mapState = state => ({
   people: state.firestore.data.people,
   account: state.firestore.ordered.accounts[0],
   groups: state.firestore.data.groups,
+  songs: state.firestore.ordered.songs,
   currentGroup: state.current.groups,
   currentGroupId: state.current.id
 });

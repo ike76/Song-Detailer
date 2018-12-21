@@ -10,7 +10,7 @@ export const categories = [
   "Sounds",
   "Topics"
 ];
-const SongFormNav = ({ setSongFormPage, currentPage }) => {
+const SongFormNav = ({ setSongFormPage, currentPage, songUnsaved }) => {
   return (
     <div className="nav-tabs-navigation">
       <div className="nav-tabs-wrapper">
@@ -23,6 +23,7 @@ const SongFormNav = ({ setSongFormPage, currentPage }) => {
                   setSongFormPage(i);
                 }}
                 style={{ cursor: "pointer" }}
+                disabled={songUnsaved && cat !== "Basics"}
               >
                 {cat}
               </NavLink>

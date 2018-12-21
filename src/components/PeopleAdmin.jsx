@@ -4,7 +4,7 @@ import firebase from "firebase";
 import { Card, CardHeader, CardBody, Col, Row } from "reactstrap";
 //
 import { showMe } from "../helpers";
-import PeopleForm from "../forms/formComponents/PeopleForm.jsx";
+import PeopleForm2 from "../forms/formComponents/PeopleForm2.jsx";
 import LoadingSpinner from "./loadingSpinner";
 import SelectorList from "./SelectorList.jsx";
 //
@@ -38,11 +38,7 @@ export class PeopleAdmin extends Component {
             </Row>
           </CardHeader>
           <CardBody>
-            <Row>
-              <Col xs={12} md={9}>
-                <PeopleForm />
-              </Col>
-            </Row>
+            <PeopleForm2 />
           </CardBody>
         </Card>
       </>
