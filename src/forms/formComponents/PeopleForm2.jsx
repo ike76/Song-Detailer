@@ -8,7 +8,6 @@ import {
   Row,
   Col,
   ListGroup,
-  ListGroupItemHeading,
   ListGroupItem
 } from "reactstrap";
 import styled from "styled-components";
@@ -21,7 +20,6 @@ import windowSize from "react-window-size";
 //
 import TextInput from "./textInput.jsx";
 import ImageDisplayer from "../../components/ImageDisplayer.jsx";
-import { showMe } from "../../helpers";
 
 export const ImageBox = styled.div`
   border-radius: 10px 10px 0 0;
@@ -107,7 +105,7 @@ class PeopleForm2 extends Component {
     this.setState({ page: data.selected });
   };
   personInfo = p => {
-    const { people, account, groups, songs } = this.props;
+    const { account } = this.props;
     const { peopleAttributeNames } = account;
     const mySongsThisRole = role => {
       return Object.keys(this.allSongsObj).reduce((arr, songId) => {
@@ -129,8 +127,7 @@ class PeopleForm2 extends Component {
     };
   };
   render() {
-    const { people, account, groups, songs } = this.props;
-    const { peopleAttributeNames } = account;
+    const { people, songs } = this.props;
     return (
       <>
         <Row className="justify-content-around">

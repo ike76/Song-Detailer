@@ -11,7 +11,6 @@ import {
   CardFooter,
   Container
 } from "reactstrap";
-import { Form } from "react-final-form";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
@@ -58,7 +57,7 @@ export class GroupEditor extends Component {
   }
 
   handleNameGroup = currentGroup => {
-    const { openWhiteout, groups } = this.props;
+    const { openWhiteout } = this.props;
     openWhiteout("nameThisGroup", {
       currentGroup, // currentGroup is undefined if this is a new group
       saveThisGroup: this.saveThisGroup, // this gets called if new group
@@ -200,7 +199,6 @@ export class GroupEditor extends Component {
     </Card>
   );
   groupDisplay = groupId => {
-    const group = this.props.groups[groupId];
     return groupId;
   };
   showAllGroups = () => {

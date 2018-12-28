@@ -28,7 +28,7 @@ const firebaseConfig = {
   authDomain: "song-detailer.firebaseapp.com",
   databaseURL: "https://song-detailer.firebaseio.com",
   projectId: "song-detailer",
-  storageBucket: "",
+  storageBucket: "gs://song-detailer.appspot.com/",
   messagingSenderId: "714813334241"
 };
 firebase.initializeApp(firebaseConfig);

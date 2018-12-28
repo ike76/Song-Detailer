@@ -8,7 +8,6 @@ import "./App.css";
 import store from "./store";
 // import SongDetails from "./components/SongDetails.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
-import FakePage from "./pages/FakePage.jsx";
 import NavBar from "./components/NavBar.jsx";
 import ModalManager from "./components/ModalManager";
 import AutoSuggester from "./forms/formComponents/autoSuggester.jsx";
@@ -31,6 +30,7 @@ class App extends Component {
               <ModalManager />
               <ToastContainer />
               <Switch>
+                <Route path="/admin/:section/:id/:page" component={AdminPage} />
                 <Route path="/admin/:section/:id" component={AdminPage} />
                 {/* 👆 this has to be before the less specific /:section */}
                 <Route path="/admin/:section" component={AdminPage} />

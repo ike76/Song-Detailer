@@ -2,11 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
-import { Card, CardHeader, CardBody, Row, Col } from "reactstrap";
 //
-import SelectorList from "./SelectorList.jsx";
 import LoadingSpinner from "./loadingSpinner.jsx";
-import GroupNameDisplay from "./GroupNameDisplay.jsx";
 import GroupList from "./GroupList.jsx";
 import GroupEditor from "../forms/formComponents/songFormPages/GroupEditor.jsx";
 export class GroupsAdmin extends Component {

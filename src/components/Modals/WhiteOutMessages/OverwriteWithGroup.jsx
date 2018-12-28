@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Alert,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter
-} from "reactstrap";
+import { Button, Card, CardHeader, CardBody, CardFooter } from "reactstrap";
 const OverwriteWithGroup = ({ cancel, group, confirm }) => {
   return (
     <Card>

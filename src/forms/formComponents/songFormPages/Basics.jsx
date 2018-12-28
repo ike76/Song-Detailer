@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Row,
-  Col,
-  Button,
-  Card,
-  ListGroup,
-  ListGroupItem,
-  Label
-} from "reactstrap";
+import { Row, Col, Button, ListGroup, ListGroupItem, Label } from "reactstrap";
 import { Form } from "react-final-form";
 import { firestoreConnect } from "react-redux-firebase";
 import { withRouter, Link } from "react-router-dom";
@@ -15,10 +7,11 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import Moment from "moment";
 //
+import AudioPlayer from "../../../components/AudioPlayer.jsx";
 import TextInput from "../textInput.jsx";
 import DateInput from "../dateInput.jsx";
 import SelectInput from "../selectInput.jsx";
-import { showMe, StyledForm } from "../../../helpers";
+import { StyledForm } from "../../../helpers";
 import WhiteOut from "../../../components/Modals/WhiteOut.jsx";
 import { openWhiteout, closeWhiteout } from "../../../actions/currentActions";
 
@@ -143,26 +136,26 @@ const SongFormBasics = ({
 
     openWhiteout("areYouSure", { message });
   };
-  const toggleSongOnAlbum = e => {
-    const { checked, value: albumId } = e.target;
-    const album = albums.find(a => a.id === albumId);
-    if (!album) return null;
-    let updatedAlbumSongs;
-    const songOnAlbum = album.albumSongs.includes(currentSongId);
-    if (!songOnAlbum) {
-      // add song
-      updatedAlbumSongs = [...album.albumSongs, currentSongId];
-    } else {
-      // remove song
-      updatedAlbumSongs = [...album.albumSongs].filter(
-        s => s !== currentSongId
-      );
-    }
-    firestore.update(
-      { collection: "albums", doc: albumId },
-      { albumSongs: updatedAlbumSongs }
-    );
-  };
+  // const toggleSongOnAlbum = e => {
+  //   const { checked, value: albumId } = e.target;
+  //   const album = albums.find(a => a.id === albumId);
+  //   if (!album) return null;
+  //   let updatedAlbumSongs;
+  //   const songOnAlbum = album.albumSongs.includes(currentSongId);
+  //   if (!songOnAlbum) {
+  //     // add song
+  //     updatedAlbumSongs = [...album.albumSongs, currentSongId];
+  //   } else {
+  //     // remove song
+  //     updatedAlbumSongs = [...album.albumSongs].filter(
+  //       s => s !== currentSongId
+  //     );
+  //   }
+  //   firestore.update(
+  //     { collection: "albums", doc: albumId },
+  //     { albumSongs: updatedAlbumSongs }
+  //   );
+  // };
   const groupOptions =
     groups &&
     groups.map(group => ({
@@ -217,6 +210,7 @@ const SongFormBasics = ({
                   />
                 </Col>
                 <Col xs={12} md={6}>
+                  <AudioPlayer values={values} />
                   <SelectInput
                     name="groupId"
                     label="Group"
@@ -241,10 +235,14 @@ const SongFormBasics = ({
                             )
                             .map(fAlbum => {
                               return (
-                                <ListGroupItem className="p-1" action>
+                                <ListGroupItem
+                                  key={fAlbum.id}
+                                  className="p-1"
+                                  action
+                                >
                                   <Link to={`/admin/albums/${fAlbum.id}`}>
                                     {fAlbum.title}{" "}
-                                    <span class="text-muted">
+                                    <span className="text-muted">
                                       {fAlbum.subtitle}
                                     </span>
                                   </Link>

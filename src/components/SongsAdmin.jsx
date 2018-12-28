@@ -10,19 +10,27 @@ import {
   ListGroupItem,
   Button
 } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import { compose } from "redux";
+
 //
 import LoadingSpinner from "./loadingSpinner";
 import SelectorList from "./SelectorList.jsx";
 import SongForm from "../forms/formComponents/SongForm.jsx";
 import SongFormNav from "../forms/formComponents/SongFormNav";
-import { showMe } from "../helpers";
 
 export class SongsAdmin extends Component {
   state = { songFormPage: 0 };
+  componentDidMount() {
+    const { page } = this.props.match.params;
+    this.setState({ songFormPage: page });
+    console.log("page", page);
+  }
+
   setSongFormPage = index => {
     this.setState({ songFormPage: index });
   };
+
   songCard() {
     const { songs, currentSongId } = this.props;
     return (
@@ -41,6 +49,7 @@ export class SongsAdmin extends Component {
             </Col>
             <Col xs={12} md={8} className="order-md-0">
               <SongFormNav
+                key={this.state.songFormPage}
                 setSongFormPage={this.setSongFormPage}
                 currentPage={this.state.songFormPage}
                 songUnsaved={currentSongId === "new"}
@@ -136,4 +145,7 @@ const mapState = state => ({
   currentResourceType: state.current.resourceType,
   groups: state.firestore.data.groups
 });
-export default connect(mapState)(SongsAdmin);
+export default compose(
+  connect(mapState),
+  withRouter
+)(SongsAdmin);

@@ -3,11 +3,8 @@ import { firestoreConnect, isLoaded } from "react-redux-firebase";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { Button, Row, Col, CardBody, CardFooter, Container } from "reactstrap";
-import { Form } from "react-final-form";
-import Swiper from "react-swipeable-views";
+import { Col, CardBody, Container } from "reactstrap";
 //
-import { showMe } from "../../helpers";
 import LoadingSpinner from "../../components/loadingSpinner.jsx";
 import AutoSuggester from "./autoSuggester.jsx";
 import { categories } from "./SongFormNav.jsx";
@@ -60,9 +57,9 @@ export class SongForm extends Component {
   };
 
   formDisplay = () => {
-    const { song, songId, peopleAttributes, people, groups, page } = this.props;
-    const vibesPage = <div>dummy Vibes Page</div>;
-    const filesPage = <div>dummy Files Page</div>;
+    const { songId, page } = this.props;
+    // const vibesPage = <div>dummy Vibes Page</div>;
+    // const filesPage = <div>dummy Files Page</div>;
     const soundsPage = <div>dummy Sounds Page</div>;
     const topicsPage = <div>dummy Topics Page</div>;
     const pageMap = {

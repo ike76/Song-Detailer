@@ -64,7 +64,7 @@ export class AdminPage extends Component {
                 })}
                 to={`/admin/${section}`}
               >
-                <span class="text-capitalize">{section}</span>
+                <span className="text-capitalize">{section}</span>
               </Link>
             </NavItem>
           ))}

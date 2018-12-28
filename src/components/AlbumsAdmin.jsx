@@ -8,12 +8,10 @@ import {
   ListGroup,
   Button,
   Row,
-  Col,
-  Tooltip
+  Col
 } from "reactstrap";
 import { Form } from "react-final-form";
 import { Link } from "react-router-dom";
-import classnames from "classnames";
 import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { connect } from "react-redux";
